@@ -114,6 +114,10 @@ class Model:
 		summary_op = tf.summary.merge_all()
 		fetches = [self._loss, self._train_op, summary_op]
 		sw = tf.summary.FileWriter(logdir, sess.graph)
+
+		cur_epoch_step = 0
+		total_epoch_step_loss = 0.0
+		count_epoch_step = 0
 		
 		for epoch in range(num_epochs):
 			epoch_start = time.time()
@@ -124,6 +128,20 @@ class Model:
 				loss_i, _, sm = sess.run(fetches=fetches, feed_dict=feed_dict)
 				total_train_loss += loss_i
 				count += 1
+
+				### epoch step
+				if step != cur_epoch_step:
+					sw.add_summary(sm, global_step=cur_epoch_step)
+					train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_loss', simple_value=total_epoch_step_loss/count_epoch_step)
+					summary = summary_pb2.Summary(value=[train_loss_value_epoch_step])
+					sw.add_summary(summary, global_step=cur_epoch_step)
+					sw.flush()
+					total_epoch_step_loss = 0.0
+					count_epoch_step = 0
+				total_epoch_step_loss += loss_i
+				count_epoch_step += 1
+				###
+
 			train_loss = total_train_loss / count
 			deco_print('Epoch {} Training Loss: {}'.format(epoch, train_loss))
 			train_loss_value = summary_pb2.Summary.Value(tag='Train_Epoch_Loss', simple_value=train_loss)

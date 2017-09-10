@@ -35,15 +35,15 @@ class DataInRamInputLayer():
 		outseq = np.arange(self._num_file)
 		np.random.shuffle(outseq)
 		for idx_file in outseq:
-			X_int = np.load(self._X_int_list[idx_file])
-			X_float = np.load(self._X_float_list[idx_file])
-			outcome = np.load(self._outcome_list[idx_file])
+			X_int = np.load(os.path.join(self._path, self._X_int_list[idx_file]))
+			X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
+			outcome = np.load(os.path.join(self._path, self._outcome_list[idx_file]))
 
 			### remove later
 			assert(X_int.shape[0]==X_float.shape[0]==outcome.shape[0])
 			###
 
-			num_example = len(X_int.shape[0])
+			num_example = X_int.shape[0]
 			num_batch = num_example // batch_size
 			idx_example = np.arange(num_example)
 			np.random.shuffle(idx_example)
