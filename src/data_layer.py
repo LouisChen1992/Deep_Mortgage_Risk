@@ -32,7 +32,7 @@ class DataInRamInputLayer():
 		outseq = np.arange(self._num_file)
 		np.random.shuffle(outseq)
 		for idx in range(len(outseq)):
-			idx_file = outseq[i]
+			idx_file = outseq[idx]
 			X_int = np.load(os.path.join(self._path, self._X_int_list[idx_file]))
 			X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
 			outcome = np.load(os.path.join(self._path, self._outcome_list[idx_file]))
