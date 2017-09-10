@@ -137,8 +137,9 @@ class Model:
 					summary = summary_pb2.Summary(value=[train_loss_value_epoch_step])
 					sw.add_summary(summary, global_step=cur_epoch_step)
 					sw.flush()
-					time_est = (time.time() - epoch_start) / (info['idx_file'] * info['num_batch'] + info['idx_batch'] + 1) * info['num_batch'] * info['num_file']
-					deco_print('Epoch Step Loss: %f, Est: %.2fs' %(train_epoch_step_loss, time_est))
+					epoch_last = time.time() - epoch_start
+					time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+					deco_print('Epoch Step Loss: %f, Elapse / Estimate: %.2fs / %.2fs' %(train_epoch_step_loss, epoch_last, time_est), end='\r')
 					total_epoch_step_loss = 0.0
 					count_epoch_step = 0
 					cur_epoch_step = info['epoch_step']

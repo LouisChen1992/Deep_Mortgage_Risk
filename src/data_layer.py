@@ -22,9 +22,6 @@ class DataInRamInputLayer():
 			self._X_int_list = sorted(X_int_list)
 			self._X_float_list = sorted(X_float_list)
 			self._outcome_list = sorted(outcome_list)
-			### remove later
-			assert(len(self._X_int_list)==len(self._X_float_list)==len(self._outcome_list))
-			###
 			self._num_file = len(self._X_int_list)
 
 			###
@@ -39,10 +36,6 @@ class DataInRamInputLayer():
 			X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
 			outcome = np.load(os.path.join(self._path, self._outcome_list[idx_file]))
 
-			### remove later
-			assert(X_int.shape[0]==X_float.shape[0]==outcome.shape[0])
-			###
-
 			num_example = X_int.shape[0]
 			num_batch = num_example // batch_size
 			idx_example = np.arange(num_example)
@@ -52,8 +45,8 @@ class DataInRamInputLayer():
 				X_float_input = X_float[idx_batch*batch_size:(idx_batch+1)*batch_size]
 				X_input = np.concatenate((X_int_input, X_float_input), axis=1)
 				Y_input = outcome[idx_batch*batch_size:(idx_batch+1)*batch_size]
+				if idx_file == self._num_file - 1:
+					self._epoch_step += 1
 				batch_info = {'epoch_step':self._epoch_step,
-					'num_batch':num_batch, 'idx_batch':idx_batch,
 					'num_file':self._num_file, 'idx_file':idx_file}
 				yield X_input, Y_input, batch_info
-			self._epoch_step += 1
