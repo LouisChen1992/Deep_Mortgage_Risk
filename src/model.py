@@ -119,7 +119,7 @@ class Model:
 			epoch_start = time.time()
 			total_train_loss = 0.0
 			count = 0
-			for i, (x, y, step) in enumerate(data_layer.iterate_one_epoch()):
+			for i, (x, y, step) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
 				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:step}
 				loss_i, _, sm = sess.run(fetches=fetches, feed_dict=feed_dict)
 				total_train_loss += loss_i

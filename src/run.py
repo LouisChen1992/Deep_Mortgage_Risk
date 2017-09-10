@@ -1,5 +1,6 @@
 import tensorflow as tf
 from model import *
+from data_layer import *
 from utils import *
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
@@ -10,7 +11,7 @@ FLAGS = tf.flags.FLAGS
 if FLAGS.model == 'train':
 	deco_print('Creating Data Layer')
 	path = '/vol/Numpy_data_subprime_new'
-	
+	dl = data_layer.DataInRamInputLayer(path=path, mode='train')
 	deco_print('Data Layer Created')
 	
 
@@ -29,4 +30,4 @@ if FLAGS.model == 'train':
 		else:
 			sess.run(tf.global_variables_initializer())
 			deco_print('Random initialization')
-		model.train(sess, data_layer, FLAGS.num_epochs, FLAGS.logdir, saver)
+		model.train(sess, dl, FLAGS.num_epochs, FLAGS.logdir, saver)
