@@ -52,5 +52,8 @@ class DataInRamInputLayer():
 				X_float_input = X_float[idx_batch*batch_size:(idx_batch+1)*batch_size]
 				X_input = np.concatenate((X_int_input, X_float_input), axis=1)
 				Y_input = outcome[idx_batch*batch_size:(idx_batch+1)*batch_size]
-				yield X_input, Y_input, self._epoch_step
+				batch_info = {'epoch_step':self._epoch_step,
+					'num_batch':num_batch, 'idx_batch':idx_batch,
+					'num_file':self._num_file, 'idx_file':idx_file}
+				yield X_input, Y_input, batch_info
 			self._epoch_step += 1

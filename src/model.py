@@ -123,8 +123,8 @@ class Model:
 			epoch_start = time.time()
 			total_train_loss = 0.0
 			count = 0
-			for i, (x, y, step) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
-				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:step}
+			for i, (x, y, info) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
+				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:info['epoch_step']}
 				loss_i, _, sm = sess.run(fetches=fetches, feed_dict=feed_dict)
 				total_train_loss += loss_i
 				count += 1
@@ -132,12 +132,16 @@ class Model:
 				### epoch step
 				if step != cur_epoch_step:
 					sw.add_summary(sm, global_step=cur_epoch_step)
-					train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_loss', simple_value=total_epoch_step_loss/count_epoch_step)
+					train_epoch_step_loss = total_epoch_step_loss / count_epoch_step
+					train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_loss', simple_value=train_epoch_step_loss)
 					summary = summary_pb2.Summary(value=[train_loss_value_epoch_step])
 					sw.add_summary(summary, global_step=cur_epoch_step)
 					sw.flush()
+					time_est = (time.time() - epoch_start) / (info['idx_file'] * info['num_batch'] + info['idx_batch'] + 1) * info['num_batch'] * info['num_file']
+					deco_print('Epoch Step Loss: %f, Est: %.2fs' %(train_epoch_step_loss, time_est))
 					total_epoch_step_loss = 0.0
 					count_epoch_step = 0
+
 				total_epoch_step_loss += loss_i
 				count_epoch_step += 1
 				###
