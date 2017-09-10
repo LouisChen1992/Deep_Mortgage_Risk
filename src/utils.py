@@ -1,4 +1,4 @@
-def deco_print(line, end = '\n'):
+def deco_print(line, end='\n'):
 	print('>==================> ' + line, end=end)
 
 def deco_print_dict(dic):
