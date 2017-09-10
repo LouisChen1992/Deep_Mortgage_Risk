@@ -1,4 +1,5 @@
 import time, os
+from utils import *
 import tensorflow as tf
 from tensorflow.python.layers.core import Dense
 from tensorflow.core.framework import summary_pb2
@@ -109,6 +110,7 @@ class Model:
 	def train(self, sess, data_layer, num_epochs, logdir, saver):
 		deco_print('Executing Training Mode')
 		tf.summary.scalar(name='loss', tensor=self._loss)
+		tf.summary.scalar(name='learning_rate', tensor=self._lr)
 		summary_op = tf.summary.merge_all()
 		fetches = [self._loss, self._train_op, summary_op]
 		sw = tf.summary.FileWriter(logdir, sess.graph)
@@ -117,8 +119,8 @@ class Model:
 			epoch_start = time.time()
 			total_train_loss = 0.0
 			count = 0
-			for i, (x, y) in enumerate(data_layer.iterate_one_epoch()):
-				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:epoch}
+			for i, (x, y, step) in enumerate(data_layer.iterate_one_epoch()):
+				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:step}
 				loss_i, _, sm = sess.run(fetches=fetches, feed_dict=feed_dict)
 				total_train_loss += loss_i
 				count += 1
@@ -132,6 +134,3 @@ class Model:
 			deco_print('Did Epoch {} In {} Seconds '.format(epoch, epoch_end - epoch_start))
 			deco_print('Saving Epoch Checkpoint')
 			saver.save(sess, save_path=os.path.join(logdir, 'model-epoch'), global_step=epoch)
-
-def deco_print(line):
-	print('>==================> ' + line)
