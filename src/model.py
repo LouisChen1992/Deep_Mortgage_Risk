@@ -139,7 +139,7 @@ class Model:
 					sw.flush()
 					epoch_last = time.time() - epoch_start
 					time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
-					deco_print('Epoch Step Loss: %f, Elapse / Estimate: %.2fs / %.2fs' %(train_epoch_step_loss, epoch_last, time_est), end='\r')
+					deco_print('Epoch Step Loss: %f, Elapse / Estimate: %.2fs / %.2fs     ' %(train_epoch_step_loss, epoch_last, time_est), end='\r')
 					total_epoch_step_loss = 0.0
 					count_epoch_step = 0
 					cur_epoch_step = info['epoch_step']

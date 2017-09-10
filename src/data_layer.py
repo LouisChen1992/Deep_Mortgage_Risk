@@ -31,7 +31,8 @@ class DataInRamInputLayer():
 	def iterate_one_epoch(self, batch_size):
 		outseq = np.arange(self._num_file)
 		np.random.shuffle(outseq)
-		for idx_file in outseq:
+		for idx in range(len(outseq)):
+			idx_file = outseq[i]
 			X_int = np.load(os.path.join(self._path, self._X_int_list[idx_file]))
 			X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
 			outcome = np.load(os.path.join(self._path, self._outcome_list[idx_file]))
@@ -48,5 +49,5 @@ class DataInRamInputLayer():
 				if idx_batch == num_batch - 1:
 					self._epoch_step += 1
 				batch_info = {'epoch_step':self._epoch_step,
-					'num_file':self._num_file, 'idx_file':idx_file}
+					'num_file':self._num_file, 'idx_file':idx}
 				yield X_input, Y_input, batch_info
