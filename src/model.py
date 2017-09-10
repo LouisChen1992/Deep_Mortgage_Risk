@@ -130,7 +130,7 @@ class Model:
 				count += 1
 
 				### epoch step
-				if step != cur_epoch_step:
+				if info['epoch_step'] != cur_epoch_step:
 					sw.add_summary(sm, global_step=cur_epoch_step)
 					train_epoch_step_loss = total_epoch_step_loss / count_epoch_step
 					train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_loss', simple_value=train_epoch_step_loss)
@@ -141,6 +141,7 @@ class Model:
 					deco_print('Epoch Step Loss: %f, Est: %.2fs' %(train_epoch_step_loss, time_est))
 					total_epoch_step_loss = 0.0
 					count_epoch_step = 0
+					cur_epoch_step = info['epoch_step']
 
 				total_epoch_step_loss += loss_i
 				count_epoch_step += 1
