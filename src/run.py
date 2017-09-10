@@ -4,19 +4,19 @@ from data_layer import *
 from utils import *
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tr.flags.DEFINE_string('mode', 'train', 'Mode')
+tf.flags.DEFINE_string('mode', 'train', 'Mode')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
 
-if FLAGS.model == 'train':
+if FLAGS.mode == 'train':
 	deco_print('Creating Data Layer')
 	path = '/vol/Numpy_data_subprime_new'
-	dl = data_layer.DataInRamInputLayer(path=path, mode='train')
+	dl = DataInRamInputLayer(path=path, mode='train')
 	deco_print('Data Layer Created')
 	
 
 	deco_print('Creating Model')
-	config = Config(num_category=7, dropout=0.9)
+	config = Config(feature_dim=291, num_category=7, dropout=0.9)
 	deco_print('Read Following Config')
 	deco_print_dict(vars(config))
 	model = Model(config)

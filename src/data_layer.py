@@ -7,7 +7,7 @@ class DataInRamInputLayer():
 		self._mode = mode
 		self._create_file_list()
 
-	def create_file_list(self)
+	def _create_file_list(self):
 		if self._mode == 'train':
 			X_int_list = []
 			X_float_list = []
@@ -32,19 +32,21 @@ class DataInRamInputLayer():
 			###
 
 	def iterate_one_epoch(self, batch_size):
-		outseq = np.random.shuffle(np.arange(self._num_file))
+		outseq = np.arange(self._num_file)
+		np.random.shuffle(outseq)
 		for idx_file in outseq:
 			X_int = np.load(self._X_int_list[idx_file])
 			X_float = np.load(self._X_float_list[idx_file])
 			outcome = np.load(self._outcome_list[idx_file])
 
 			### remove later
-			assert(X_int.shape[0]==X_float.shape[0]=outcome.shape[0])
+			assert(X_int.shape[0]==X_float.shape[0]==outcome.shape[0])
 			###
 
 			num_example = len(X_int.shape[0])
 			num_batch = num_example // batch_size
-			idx_example = np.random.shuffle(np.arange(num_example))
+			idx_example = np.arange(num_example)
+			np.random.shuffle(idx_example)
 			for idx_batch in range(num_batch):
 				X_int_input = X_int[idx_batch*batch_size:(idx_batch+1)*batch_size]
 				X_float_input = X_float[idx_batch*batch_size:(idx_batch+1)*batch_size]

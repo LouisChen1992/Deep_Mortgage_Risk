@@ -3,4 +3,4 @@ def deco_print(line):
 
 def deco_print_dict(dic):
 	for key, value in dic.items():
-		deco_print('{} \t {}'.format(key, value))
+		deco_print('{} : {}'.format(key, value))
