@@ -23,11 +23,12 @@ if FLAGS.mode == 'train':
 	deco_print('Model Created')
 
 	with tf.Session() as sess:
-		saver = tf.train.Saver(max_to_keep=100)
+		saver = tf.train.Saver(max_to_keep=50)
+		saver_step = tf.train.Saver(max_to_keep=100)
 		if tf.train.latest_checkpoint(FLAGS.logdir) is not None:
 			saver.restore(sess, tf.train.latest_checkpoint(FLAGS.logdir))
 			deco_print('Restored checkpoint. Resuming training')
 		else:
 			sess.run(tf.global_variables_initializer())
 			deco_print('Random initialization')
-		model.train(sess, dl, FLAGS.num_epochs, FLAGS.logdir, saver)
+		model.train(sess, dl, FLAGS.num_epochs, FLAGS.logdir, saver, saver_step)

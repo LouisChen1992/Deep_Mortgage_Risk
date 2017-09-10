@@ -107,7 +107,7 @@ class Model:
 		optimizer = tf.train.MomentumOptimizer(self._lr, self._config.momentum)
 		self._train_op = optimizer.minimize(loss)
 
-	def train(self, sess, data_layer, num_epochs, logdir, saver):
+	def train(self, sess, data_layer, num_epochs, logdir, saver, saver_step):
 		deco_print('Executing Training Mode')
 		tf.summary.scalar(name='loss', tensor=self._loss)
 		tf.summary.scalar(name='learning_rate', tensor=self._lr)
@@ -143,13 +143,15 @@ class Model:
 					total_epoch_step_loss = 0.0
 					count_epoch_step = 0
 					cur_epoch_step = info['epoch_step']
+					if cur_epoch_step % 100 == 0:
+						saver_step.save(sess, save_path=os.path.join(logdir, 'model-epoch-step'), global_step=cur_epoch_step)
 
 				total_epoch_step_loss += loss_i
 				count_epoch_step += 1
 				###
 
 			train_loss = total_train_loss / count
-			deco_print('Epoch {} Training Loss: {}'.format(epoch, train_loss))
+			deco_print('Epoch {} Training Loss: {}                              '.format(epoch, train_loss))
 			train_loss_value = summary_pb2.Summary.Value(tag='Train_Epoch_Loss', simple_value=train_loss)
 			summary = summary_pb2.Summary(value=[train_loss_value])
 			sw.add_summary(summary=summary, global_step=epoch)
