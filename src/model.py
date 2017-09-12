@@ -84,7 +84,7 @@ class Model:
 				h_l = layer_l(h_l)
 				h_l = tf.nn.dropout(h_l, self._config.dropout)
 
-		with tf.variable_scope('lase_dense_layer'):
+		with tf.variable_scope('last_dense_layer'):
 			layer = Dense(units=self._config.num_category)
 			self._logits = layer(h_l)
 
