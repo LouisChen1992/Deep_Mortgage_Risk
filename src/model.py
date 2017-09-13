@@ -126,9 +126,10 @@ class Model:
 				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:info['epoch_step']}
 				loss_i, _ = sess.run(fetches=[self._loss, self._train_op], feed_dict=feed_dict)
 				total_train_loss += loss_i
+				total_epoch_step_loss += loss_i
 				count += 1
+				count_epoch_step += 1
 
-				### epoch step
 				if info['epoch_step'] != cur_epoch_step:
 					sm, = sess.run(fetches=[summary_op], feed_dict=feed_dict)
 					sw.add_summary(sm, global_step=cur_epoch_step)
@@ -145,10 +146,6 @@ class Model:
 					cur_epoch_step = info['epoch_step']
 					if cur_epoch_step % 100 == 0:
 						saver_step.save(sess, save_path=os.path.join(logdir, 'model-epoch-step'), global_step=cur_epoch_step)
-
-				total_epoch_step_loss += loss_i
-				count_epoch_step += 1
-				###
 
 			train_loss = total_train_loss / count
 			deco_print('Epoch {} Training Loss: {}                              '.format(epoch, train_loss))
