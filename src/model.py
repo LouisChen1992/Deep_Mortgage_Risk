@@ -163,12 +163,20 @@ class Model:
 
 	def test(self, sess, data_layer):
 		deco_print('Executing Test Mode\n')
+		epoch_start = time.time()
+		cur_epoch_step = 0
 		total_test_loss = 0.0
 		count = 0
-		for i, (x, y, _) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
+		for i, (x, y, info) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
 			feed_dict = {self._x_placeholder:x, self._y_placeholder:y}
 			loss_i, = sess.run(fetches=[self._loss], feed_dict=feed_dict)
 			total_test_loss += loss_i
 			count += 1
+
+			if info['epoch_step'] != cur_epoch_step:
+				epoch_last = time.time() - epoch_start
+				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+				deco_print('Test Loss: %f, Elapse / Estimate: %.2fs / %.2fs     ' %(total_test_loss / count, epoch_last, time_est), end='\r')
+
 		test_loss = total_test_loss / count
 		deco_print('Test Loss: %f' %test_loss)
