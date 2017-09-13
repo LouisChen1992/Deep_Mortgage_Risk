@@ -108,11 +108,10 @@ class Model:
 		self._train_op = optimizer.minimize(loss)
 
 	def train(self, sess, data_layer, num_epochs, logdir, saver, saver_step):
-		deco_print('Executing Training Mode')
+		deco_print('Executing Training Mode\n')
 		tf.summary.scalar(name='loss', tensor=self._loss)
 		tf.summary.scalar(name='learning_rate', tensor=self._lr)
 		summary_op = tf.summary.merge_all()
-		fetches = [self._loss, self._train_op, summary_op]
 		sw = tf.summary.FileWriter(logdir, sess.graph)
 
 		cur_epoch_step = 0
@@ -125,12 +124,13 @@ class Model:
 			count = 0
 			for i, (x, y, info) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
 				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:info['epoch_step']}
-				loss_i, _, sm = sess.run(fetches=fetches, feed_dict=feed_dict)
+				loss_i, _ = sess.run(fetches=[self._loss, self._train_op], feed_dict=feed_dict)
 				total_train_loss += loss_i
 				count += 1
 
 				### epoch step
 				if info['epoch_step'] != cur_epoch_step:
+					sm, = sess.run(fetches=[summary_op], feed_dict=feed_dict)
 					sw.add_summary(sm, global_step=cur_epoch_step)
 					train_epoch_step_loss = total_epoch_step_loss / count_epoch_step
 					train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_loss', simple_value=train_epoch_step_loss)
@@ -158,5 +158,17 @@ class Model:
 			sw.flush()
 			epoch_end = time.time()
 			deco_print('Did Epoch {} In {} Seconds '.format(epoch, epoch_end - epoch_start))
-			deco_print('Saving Epoch Checkpoint')
+			deco_print('Saving Epoch Checkpoint\n')
 			saver.save(sess, save_path=os.path.join(logdir, 'model-epoch'), global_step=epoch)
+
+	def test(self, sess, data_layer):
+		deco_print('Executing Test Mode\n')
+		total_test_loss = 0.0
+		count = 0
+		for i, (x, y, _) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
+			feed_dict = {self._x_placeholder:x, self._y_placeholder:y}
+			loss_i, = sess.run(fetches=[self._loss], feed_dict=feed_dict)
+			total_test_loss += loss_i
+			count += 1
+		test_loss = total_test_loss / count
+		deco_print('Test Loss: %f' %test_loss)
