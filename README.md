@@ -12,3 +12,9 @@ This repository contains implementations of a five-layer neural network for pred
 ```
 $ python3 run.py --mode=train --logdir=../output
 ```
+
+### Test
+
+```
+$ python3 run.py --mode=test --logdir=../output
+```
