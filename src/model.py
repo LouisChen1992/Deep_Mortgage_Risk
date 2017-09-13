@@ -177,6 +177,7 @@ class Model:
 				epoch_last = time.time() - epoch_start
 				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
 				deco_print('Test Loss: %f, Elapse / Estimate: %.2fs / %.2fs     ' %(total_test_loss / count, epoch_last, time_est), end='\r')
+				cur_epoch_step = info['epoch_step']
 
 		test_loss = total_test_loss / count
 		deco_print('Test Loss: %f' %test_loss)
