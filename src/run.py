@@ -11,6 +11,8 @@ FLAGS = tf.flags.FLAGS
 deco_print('Creating Data Layer')
 if FLAGS.mode == 'train':
 	path = '/vol/Numpy_data_subprime_new'
+elif FLAGS.mode == 'validation':
+	path = '/vol/Numpy_data_subprime_Val_new'
 elif FLAGS.mode == 'test':
 	path = '/vol/Numpy_data_subprime_Test_new'
 else:
@@ -21,7 +23,7 @@ deco_print('Data Layer Created')
 deco_print('Creating Model')
 if FLAGS.mode == 'train':
 	config = Config(feature_dim=291, num_category=7, dropout=0.9)
-elif FLAGS.mode == 'test':
+else:
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
@@ -39,5 +41,5 @@ with tf.Session() as sess:
 		deco_print('Random Initialization')
 	if FLAGS.mode == 'train':
 		model.train(sess, dl, FLAGS.num_epochs, FLAGS.logdir, saver, saver_step)
-	elif FLAGS.mode == 'test':
-		model.test(sess, dl)
+	else:
+		model.test(sess, dl, FLAGS.logdir)

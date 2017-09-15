@@ -158,7 +158,7 @@ class Model:
 			deco_print('Saving Epoch Checkpoint\n')
 			saver.save(sess, save_path=os.path.join(logdir, 'model-epoch'), global_step=epoch)
 
-	def test(self, sess, data_layer):
+	def test(self, sess, data_layer, logdir):
 		deco_print('Executing Test Mode\n')
 		epoch_start = time.time()
 		cur_epoch_step = 0
@@ -178,3 +178,5 @@ class Model:
 
 		test_loss = total_test_loss / count
 		deco_print('Test Loss: %f' %test_loss)
+		with open(os.path.join(logdir, 'loss.txt'), 'w') as f:
+			f.write('Test Loss: %f' %test_loss)
