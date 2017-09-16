@@ -26,10 +26,10 @@ if FLAGS.mode == 'train':
 	config = Config(feature_dim=291, num_category=7, dropout=0.9)
 	model = Model(config)
 	config_valid = Config(feature_dim=291, num_category=7, dropout=1.0)
-	model_valid = Model(config_valid, force_var_reuse=True, train=False)
+	model_valid = Model(config_valid, force_var_reuse=True, is_training=False)
 else:
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
-	model = Model(config, train=False)
+	model = Model(config, is_training=False)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
 deco_print('Model Created')
