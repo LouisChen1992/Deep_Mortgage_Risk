@@ -24,14 +24,14 @@ deco_print('Data Layer Created')
 deco_print('Creating Model')
 if FLAGS.mode == 'train':
 	config = Config(feature_dim=291, num_category=7, dropout=0.9)
+	model = Model(config)
 	config_valid = Config(feature_dim=291, num_category=7, dropout=1.0)
+	model_valid = Model(config_valid, force_var_reuse=True, train=False)
 else:
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
+	model = Model(config, train=False)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
-model = Model(config)
-if FLAGS.mode == 'train':
-	model_valid = Model(config_valid, force_var_reuse=True)
 deco_print('Model Created')
 
 with tf.Session() as sess:
@@ -95,7 +95,7 @@ with tf.Session() as sess:
 			count_valid = 0
 			for i, (x, y, _) in enumerate(dl_valid.iterate_one_epoch(model_valid._config.batch_size)):
 				feed_dict = {model_valid._x_placeholder:x, model_valid._y_placeholder:y}
-				loss_i = sess.run(fetches=[model_valid._loss], feed_dict=feed_dict)
+				loss_i, = sess.run(fetches=[model_valid._loss], feed_dict=feed_dict)
 				total_valid_loss += loss_i
 				count_valid += 1
 			valid_loss = total_valid_loss / count_valid

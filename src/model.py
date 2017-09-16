@@ -67,13 +67,14 @@ class Config:
 		return self._dropout
 
 class Model:
-	def __init__(self, config, force_var_reuse=False):
+	def __init__(self, config, force_var_reuse=False, train=True):
 		self._config = config
 		self._force_var_reuse = force_var_reuse
 		with tf.variable_scope(name_or_scope=tf.get_variable_scope(), reuse=force_var_reuse):
 			self._build_forward_pass_graph()
 		self._add_loss()
-		self._add_train_op()
+		if train:
+			self._add_train_op()
 
 	def _build_forward_pass_graph(self):
 		self._x_placeholder = tf.placeholder(dtype=tf.float32, shape=(self._config.batch_size, self._config.feature_dim), name='input_placeholder')
