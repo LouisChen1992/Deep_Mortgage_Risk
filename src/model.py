@@ -67,11 +67,15 @@ class Config:
 		return self._dropout
 
 class Model:
-	def __init__(self, config):
+	def __init__(self, config, force_var_reuse=False, is_training=True):
 		self._config = config
-		self._build_forward_pass_graph()
+		self._force_var_reuse = force_var_reuse
+		self._is_training = is_training
+		with tf.variable_scope(name_or_scope=tf.get_variable_scope(), reuse=self._force_var_reuse):
+			self._build_forward_pass_graph()
 		self._add_loss()
-		self._add_train_op()
+		if self._is_training:
+			self._add_train_op()
 
 	def _build_forward_pass_graph(self):
 		self._x_placeholder = tf.placeholder(dtype=tf.float32, shape=(self._config.batch_size, self._config.feature_dim), name='input_placeholder')
@@ -106,77 +110,3 @@ class Model:
 
 		optimizer = tf.train.MomentumOptimizer(self._lr, self._config.momentum)
 		self._train_op = optimizer.minimize(loss)
-
-	def train(self, sess, data_layer, num_epochs, logdir, saver, saver_step):
-		deco_print('Executing Training Mode\n')
-		tf.summary.scalar(name='loss', tensor=self._loss)
-		tf.summary.scalar(name='learning_rate', tensor=self._lr)
-		summary_op = tf.summary.merge_all()
-		sw = tf.summary.FileWriter(logdir, sess.graph)
-
-		cur_epoch_step = 0
-		total_epoch_step_loss = 0.0
-		count_epoch_step = 0
-		
-		for epoch in range(num_epochs):
-			epoch_start = time.time()
-			total_train_loss = 0.0
-			count = 0
-			for i, (x, y, info) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
-				feed_dict = {self._x_placeholder:x, self._y_placeholder:y, self._epoch_step:info['epoch_step']}
-				loss_i, _ = sess.run(fetches=[self._loss, self._train_op], feed_dict=feed_dict)
-				total_train_loss += loss_i
-				total_epoch_step_loss += loss_i
-				count += 1
-				count_epoch_step += 1
-
-				if info['epoch_step'] != cur_epoch_step:
-					sm, = sess.run(fetches=[summary_op], feed_dict=feed_dict)
-					sw.add_summary(sm, global_step=cur_epoch_step)
-					train_epoch_step_loss = total_epoch_step_loss / count_epoch_step
-					train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_loss', simple_value=train_epoch_step_loss)
-					summary = summary_pb2.Summary(value=[train_loss_value_epoch_step])
-					sw.add_summary(summary, global_step=cur_epoch_step)
-					sw.flush()
-					epoch_last = time.time() - epoch_start
-					time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
-					deco_print('Epoch Step Loss: %f, Elapse / Estimate: %.2fs / %.2fs     ' %(train_epoch_step_loss, epoch_last, time_est), end='\r')
-					total_epoch_step_loss = 0.0
-					count_epoch_step = 0
-					cur_epoch_step = info['epoch_step']
-					if cur_epoch_step % 100 == 0:
-						saver_step.save(sess, save_path=os.path.join(logdir, 'model-epoch-step'), global_step=cur_epoch_step)
-
-			train_loss = total_train_loss / count
-			deco_print('Epoch {} Training Loss: {}                              '.format(epoch, train_loss))
-			train_loss_value = summary_pb2.Summary.Value(tag='Train_Epoch_Loss', simple_value=train_loss)
-			summary = summary_pb2.Summary(value=[train_loss_value])
-			sw.add_summary(summary=summary, global_step=epoch)
-			sw.flush()
-			epoch_end = time.time()
-			deco_print('Did Epoch {} In {} Seconds '.format(epoch, epoch_end - epoch_start))
-			deco_print('Saving Epoch Checkpoint\n')
-			saver.save(sess, save_path=os.path.join(logdir, 'model-epoch'), global_step=epoch)
-
-	def test(self, sess, data_layer, logdir):
-		deco_print('Executing Test Mode\n')
-		epoch_start = time.time()
-		cur_epoch_step = 0
-		total_test_loss = 0.0
-		count = 0
-		for i, (x, y, info) in enumerate(data_layer.iterate_one_epoch(self._config.batch_size)):
-			feed_dict = {self._x_placeholder:x, self._y_placeholder:y}
-			loss_i, = sess.run(fetches=[self._loss], feed_dict=feed_dict)
-			total_test_loss += loss_i
-			count += 1
-
-			if info['epoch_step'] != cur_epoch_step:
-				epoch_last = time.time() - epoch_start
-				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
-				deco_print('Test Loss: %f, Elapse / Estimate: %.2fs / %.2fs     ' %(total_test_loss / count, epoch_last, time_est), end='\r')
-				cur_epoch_step = info['epoch_step']
-
-		test_loss = total_test_loss / count
-		deco_print('Test Loss: %f' %test_loss)
-		with open(os.path.join(logdir, 'loss.txt'), 'w') as f:
-			f.write('Test Loss: %f' %test_loss)
