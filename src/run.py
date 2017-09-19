@@ -4,10 +4,11 @@ from data_layer import *
 from utils import *
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test')
+tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
 
+### Create Data Layer
 deco_print('Creating Data Layer')
 if FLAGS.mode == 'train':
 	path = '/vol/Numpy_data_subprime_new'
@@ -17,22 +18,31 @@ if FLAGS.mode == 'train':
 elif FLAGS.mode == 'test':
 	path = '/vol/Numpy_data_subprime_Test_new'
 	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
+elif FLAGS.mode == 'sens_anlys':
+	path = '/vol/Numpy_data_subprime_Test_new'
+	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
 else:
 	raise ValueError('Mode Not Implemented')
 deco_print('Data Layer Created')
+###
 
+### Create Model
 deco_print('Creating Model')
 if FLAGS.mode == 'train':
 	config = Config(feature_dim=291, num_category=7, dropout=0.9)
 	model = Model(config)
 	config_valid = Config(feature_dim=291, num_category=7, dropout=1.0)
 	model_valid = Model(config_valid, force_var_reuse=True, is_training=False)
-else:
+elif FLAGS.mode == 'test':
+	config = Config(feature_dim=291, num_category=7, dropout=1.0)
+	model = Model(config, is_training=False)
+elif FLAGS.mode == 'sens_anlys':
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
 	model = Model(config, is_training=False)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
 deco_print('Model Created')
+###
 
 with tf.Session() as sess:
 	saver = tf.train.Saver(max_to_keep=50)
@@ -107,7 +117,7 @@ with tf.Session() as sess:
 			deco_print('Saving Epoch Checkpoint\n')
 			saver.save(sess, save_path=os.path.join(FLAGS.logdir, 'model-epoch'), global_step=epoch)
 
-	else:
+	elif FLAGS.mode == 'test':
 		deco_print('Executing Test Mode\n')
 		epoch_start = time.time()
 		cur_epoch_step = 0
@@ -129,3 +139,6 @@ with tf.Session() as sess:
 		deco_print('Test Loss: %f' %test_loss)
 		with open(os.path.join(FLAGS.logdir, 'loss.txt'), 'w') as f:
 			f.write('Test Loss: %f\n' %test_loss)
+
+	elif FLAGS.mode == 'sens_anlys':
+		pass
