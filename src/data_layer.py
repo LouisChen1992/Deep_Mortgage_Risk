@@ -7,7 +7,7 @@ class DataInRamInputLayer():
 		self._path = path
 		self._mode = mode
 		self._create_covariate_idx_associations()
-		# self._create_file_list()
+		self._create_file_list()
 		self._epoch_step = 0
 
 	def _create_covariate_idx_associations(self):
@@ -51,7 +51,7 @@ class DataInRamInputLayer():
 		self._num_file = len(self._X_int_list)
 		self._outseq = np.arange(self._num_file)
 
-	def iterate_one_epoch(self, batch_size):
+	def iterate_one_epoch(self, batch_size, output_current_status=False):
 		if self._mode == 'train':
 			np.random.shuffle(self._outseq)
 
@@ -78,4 +78,8 @@ class DataInRamInputLayer():
 					self._epoch_step += 1
 				batch_info = {'epoch_step':self._epoch_step,
 					'num_file':self._num_file, 'idx_file':idx}
-				yield X_input, Y_input, batch_info
+
+				if not output_current_status:
+					yield X_input, Y_input, batch_info
+				else:
+					pass
