@@ -24,3 +24,39 @@ The table below reports test loss for the best model (on validation set):
 ```
 $ python3 run.py --mode=sens_anlys --logdir=output
 ```
+The table below reports covariate ranking by average absolute gradient for transition current -> paid off: 
+
+
+| Feature                                                        | Ave. Absolute Gradient |
+|:--------------------------------------------------------------:|:----------------------:|
+| current outstanding balance                                    | 0.1878                 |
+| original loan amount                                           | 0.0856                 |
+| original interest rate                                         | 0.0503                 |
+| current interest rate as well - national mortgage rate as well | 0.0478                 |
+| initial interest rate - national mortgate rate                 | 0.0463                 |
+| housing price increase/decrease since origination              | 0.0386                 |
+| number of occurrences of 3                                     | 0.0384                 |
+| scheduled principle and interest due                           | 0.0364                 |
+| number of occurrences of 6                                     | 0.0362                 |
+| zillow housing prices (macro_data[21] != 0)                    | 0.0346                 |
+| total days delinquent >= 160                                   | 0.0322                 |
+| time since origination                                         | 0.0306                 |
+| ARM first rate reset period                                    | 0.0295                 |
+| fico score                                                     | 0.0293                 |
+| lagged prepayment rate                                         | 0.0292                 |
+| number of occurrences of 9                                     | 0.0237                 |
+| current interest rate - original interest rate                 | 0.0228                 |
+| total days delinquent >= 130 & < 160                           | 0.0225                 |
+| state unemployment rate                                        | 0.0214                 |
+| total days delinquent                                          | 0.0195                 |
+| ARM contract details (X_static[37])                            | 0.0191                 |
+| lagged default rate                                            | 0.0190                 |
+| total number of prime mortgages currently alive                | 0.0190                 |
+| lien type == 5                                                 | 0.0185                 |
+| channel type == 8                                              | 0.0181                 |
+| total days delinquent > 100 & < 130                            | 0.0172                 |
+| ARM contract details (X_static[33])                            | 0.0157                 |
+| product type == 0                                              | 0.0149                 |
+| number of occurrences of C                                     | 0.0145                 |
+| negative amortization permitted for ARM loans                  | 0.0137                 |
+| ...                                                            | ...                    |
