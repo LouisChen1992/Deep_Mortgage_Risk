@@ -54,9 +54,9 @@ The table below reports covariate ranking by average absolute gradient for trans
 | total number of prime mortgages currently alive                | 0.0190                 |
 | lien type == 5                                                 | 0.0185                 |
 | channel type == 8                                              | 0.0181                 |
+| current delinquency status == 6                                | 0.0180                 |
+| current delinquency status == 3                                | 0.0177                 |
+| current delinquency status == 9                                | 0.0177                 |
 | total days delinquent > 100 & < 130                            | 0.0172                 |
 | ARM contract details (X_static[33])                            | 0.0157                 |
-| product type == 0                                              | 0.0149                 |
-| number of occurrences of C                                     | 0.0145                 |
-| negative amortization permitted for ARM loans                  | 0.0137                 |
 | ...                                                            | ...                    |
