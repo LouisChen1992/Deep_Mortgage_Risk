@@ -1,5 +1,5 @@
 import time, os
-from utils import *
+from .utils import *
 import tensorflow as tf
 from tensorflow.python.layers.core import Dense
 from tensorflow.core.framework import summary_pb2

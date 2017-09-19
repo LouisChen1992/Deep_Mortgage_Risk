@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from model import *
-from data_layer import *
-from utils import *
+from src.model import *
+from src.data_layer import *
+from src.utils import *
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys')
@@ -144,13 +144,14 @@ with tf.Session() as sess:
 
 	elif FLAGS.mode == 'sens_anlys':
 		deco_print('Executing Sensitivity Analysis Mode\n')
-		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'))
 		if FLAGS.sample_size == -100:
 			num_batch = float('inf')
 		else:
 			num_batch = FLAGS.sample_size / model._config.batch_size
 		count = np.zeros(shape=(5,), dtype=int)
 		gradients = np.zeros(shape=(5, model._config.num_category, model._config.feature_dim), dtype=float)
+		epoch_start = time.time()
+		cur_epoch_step = 0
 		for i, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
 			if i >= num_batch:
 				break
@@ -160,6 +161,12 @@ with tf.Session() as sess:
 			for v in range(model._config.num_category):
 				gradients_i_v = gradients_i[v]
 				gradients[:,v,:] += x_cur.T.dot(np.absolute(gradients_i_v))
+			if info['epoch_step'] != cur_epoch_step:
+				epoch_last = time.time() - epoch_start
+				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+				deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
+				cur_epoch_step = info['epoch_step']
 		gradients /= count[:, np.newaxis, np.newaxis]
+		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'))
 		np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'), gradients)
 		deco_print('Sensitivity Analysis Finished')
