@@ -7,17 +7,17 @@ This repository contains implementations of a five-layer neural network for pred
   * Python v3.5
   * TensorFlow v1.2+
 
-### Train
+### Train, Validation & Test
 
 ```
 $ python3 run.py --mode=train --logdir=output --num_epochs=10
-```
-
-### Test
-
-```
 $ python3 run.py --mode=test --logdir=output
 ```
+The table below reports test loss for the best model (on validation set):
+
+| Epoch | Train Loss | Validation Loss | Test Loss |
+|:-----:|:----------:|:---------------:|:---------:|
+| 9     | 0.1642     | 0.1930          | 0.1666    |
 
 ### Sensitivity Analysis
 
