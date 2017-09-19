@@ -10,11 +10,17 @@ This repository contains implementations of a five-layer neural network for pred
 ### Train
 
 ```
-$ python3 run.py --mode=train --logdir=../output
+$ python3 run.py --mode=train --logdir=../output --num_epochs=10
 ```
 
 ### Test
 
 ```
 $ python3 run.py --mode=test --logdir=../output
+```
+
+### Sensitivity Analysis
+
+```
+$ python3 run.py --mode=sens_anlys --logdir=../output
 ```
