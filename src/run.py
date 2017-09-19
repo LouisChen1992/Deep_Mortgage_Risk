@@ -144,22 +144,22 @@ with tf.Session() as sess:
 
 	elif FLAGS.mode == 'sens_anlys':
 		deco_print('Executing Sensitivity Analysis Mode\n')
+		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'))
 		if FLAGS.sample_size == -100:
 			num_batch = float('inf')
 		else:
 			num_batch = FLAGS.sample_size / model._config.batch_size
-
-		count_status = np.zeros(shape=(5,), dtype=int)
+		count = np.zeros(shape=(5,), dtype=int)
 		gradients = np.zeros(shape=(5, model._config.num_category, model._config.feature_dim), dtype=float)
-
 		for i, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
 			if i >= num_batch:
 				break
-			count_status += np.sum(x_cur, axis=0)
+			count += np.sum(x_cur, axis=0)
 			feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
 			gradients_i, = sess.run(fetches=[model._x_gradients], feed_dict=feed_dict)
 			for v in range(model._config.num_category):
 				gradients_i_v = gradients_i[v]
 				gradients[:,v,:] += x_cur.T.dot(np.absolute(gradients_i_v))
-		gradients /= count_status[:, np.newaxis, np.newaxis]
+		gradients /= count[:, np.newaxis, np.newaxis]
 		np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'), gradients)
+		deco_print('Sensitivity Analysis Finished')
