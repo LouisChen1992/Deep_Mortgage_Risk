@@ -7,19 +7,32 @@ class DataInRamInputLayer():
 		self._path = path
 		self._mode = mode
 		self._create_covariate_idx_associations()
-		self._create_file_list()
+		# self._create_file_list()
 		self._epoch_step = 0
 
 	def _create_covariate_idx_associations(self):
 		with open('covariate2idx_int.json', 'r') as f:
 			self._covariate2idx_int = json.load(f)
 			self._idx2covariate_int = {value:key for key, value in self._covariate2idx_int.items()}
+			self._covariate_count_int = len(self._covariate2idx_int.keys())
+
 		with open('covariate2idx_float.json', 'r') as f:
 			self._covariate2idx_float = json.load(f)
 			self._idx2covariate_float = {value:key for key, value in self._covariate2idx_float.items()}
+			self._covariate_count_float = len(self._covariate2idx_float.keys())
+
+		self._idx2covariate = {}
+		for key in self._idx2covariate_int.keys():
+			self._idx2covariate[key] = self._idx2covariate_int[key]
+		for key in self._idx2covariate_float.keys():
+			self._idx2covariate[key+self._covariate_count_int] = self._idx2covariate_float[key]
+		self._covariate_count = self._covariate_count_int + self._covariate_count_float
+		self._covariate2idx = {value:key for key, value in self._idx2covariate.items()}
+
 		with open('outcome2idx.json', 'r') as f:
 			self._outcome2idx = json.load(f)
 			self._idx2outcome = {value:key for key, value in self._outcome2idx.items()}
+			self._outcome_count = len(self._outcome2idx.keys())
 
 	def _create_file_list(self):
 		X_int_list = []
