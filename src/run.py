@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 from model import *
 from data_layer import *
@@ -5,6 +6,7 @@ from utils import *
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys')
+tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
 
@@ -38,7 +40,7 @@ elif FLAGS.mode == 'test':
 	model = Model(config, is_training=False)
 elif FLAGS.mode == 'sens_anlys':
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
-	model = Model(config, is_training=False)
+	model = Model(config, is_training=False, is_analysis=True)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
 deco_print('Model Created')
@@ -141,4 +143,23 @@ with tf.Session() as sess:
 			f.write('Test Loss: %f\n' %test_loss)
 
 	elif FLAGS.mode == 'sens_anlys':
-		pass
+		deco_print('Executing Sensitivity Analysis Mode\n')
+		if FLAGS.sample_size == -100:
+			num_batch = float('inf')
+		else:
+			num_batch = FLAGS.sample_size / model._config.batch_size
+
+		count_status = np.zeros(shape=(5,), dtype=int)
+		gradients = np.zeros(shape=(5, model._config.num_category, model._config.feature_dim), dtype=float)
+
+		for i, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
+			if i >= num_batch:
+				break
+			count_status += np.sum(x_cur, axis=0)
+			feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
+			gradients_i, = sess.run(fetches=[model._x_gradients], feed_dict=feed_dict)
+			for v in range(model._config.num_category):
+				gradients_i_v = gradients_i[v]
+				gradients[:,v,:] += x_cur.T.dot(np.absolute(gradients_i_v))
+		gradients /= count_status[:, np.newaxis, np.newaxis]
+		np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'), gradients)

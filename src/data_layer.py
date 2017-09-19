@@ -82,4 +82,6 @@ class DataInRamInputLayer():
 				if not output_current_status:
 					yield X_input, Y_input, batch_info
 				else:
-					pass
+					### output current status
+					X_current_status = X_int_input[:,:5]
+					yield X_input, Y_input, batch_info, X_current_status
