@@ -3,12 +3,13 @@ import json
 import numpy as np
 
 class DataInRamInputLayer():
-	def __init__(self, path, mode):
+	def __init__(self, path, mode, load_file_list=True):
 		self._path = path
 		self._mode = mode
 		self._create_covariate_idx_associations()
-		self._create_file_list()
-		self._epoch_step = 0
+		if load_file_list:
+			self._create_file_list()
+			self._epoch_step = 0
 
 	def _create_covariate_idx_associations(self):
 		with open('src/covariate2idx_int.json', 'r') as f:
