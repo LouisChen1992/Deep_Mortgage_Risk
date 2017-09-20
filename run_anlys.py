@@ -69,10 +69,10 @@ else:
 			return y
 
 		y = f(x_idx)
-		plt.scatter(x_idx, y)
-		plt.xlabel(dl._idx2covariate[idx])
-		plt.ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
-		plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d.pdf' %(idx, idx_output)))
+		matplotlib.pyplot.scatter(x_idx, y)
+		matplotlib.pyplot.xlabel(dl._idx2covariate[idx])
+		matplotlib.pyplot.ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
+		matplotlib.pyplot.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d.pdf' %(idx, idx_output)))
 
 	else:
 		raise ValueError('Task Not Supported! ')
