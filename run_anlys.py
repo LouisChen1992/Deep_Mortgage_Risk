@@ -49,7 +49,7 @@ else:
 	if FLAGS.task == '1d_nonlinear':
 		idx = int(input('Enter Variate Idx (237 - 290): '))
 		factor = float(input('Enter Amplification Factor: '))
-		idx_output = int(input('Enter Output Idx: (0 - 7)'))
+		idx_output = int(input('Enter Output Idx: (0 - 7): '))
 		data = np.load(os.path.join(FLAGS.logdir, 'X_stat_Test.npz'))
 		mean = data['mean']
 		std = data['std']
@@ -63,7 +63,7 @@ else:
 			for i in range(len(x)):
 				x_input[idx] = x[i] / factor
 				prob, =sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_input[np.newaxis,:]})
-				y[i] = prob[idx_output]
+				y[i] = prob[0][idx_output]
 			return y
 
 		y = f(x_idx)
