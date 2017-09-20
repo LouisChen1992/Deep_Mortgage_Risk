@@ -3,7 +3,9 @@ import math
 import copy
 import numpy as np
 import tensorflow as tf
-import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+# import matplotlib.pyplot as plt
 from src.utils import deco_print, deco_print_dict
 from src.utils_anlys import covariate_ranking_by_ave_absolute_gradient
 from src.model import Config, Model
