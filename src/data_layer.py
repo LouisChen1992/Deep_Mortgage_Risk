@@ -85,3 +85,18 @@ class DataInRamInputLayer():
 					### output current status
 					X_current_status = X_int_input[:,:5]
 					yield X_input, Y_input, batch_info, X_current_status
+
+	def calculate_feature_statistics(self):
+		moments = np.zeros((2, self._covariate_count))
+		count = 0
+		for idx_file in range(self._num_file):
+			X_int = np.load(os.path.join(self._path, self._X_int_list[idx_file]))
+			X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
+			assert(X_int.shape[0] == X_float.shape[0])
+			count += X_int.shape[0]
+
+			X = np.concatenate([X_int, X_float], axis=1)
+			moments[0] += np.sum(X, axis=0)
+			moments[1] += np.sum(X**2, axis=0)
+		self._mean = moments[0] / count
+		self._std = np.sqrt(moments[1] / count - self._mean ** 2)
