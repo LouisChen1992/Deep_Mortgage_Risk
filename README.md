@@ -3,15 +3,13 @@
 This repository contains implementations of a five-layer neural network for predicting mortgage risk. Please read the paper [PDF](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2799443) for details. 
 
 ### Requirements
-
   * Python v3.5
   * TensorFlow v1.2+
 
 ### Train, Validation & Test
-
 ```
-$ python3 run.py --mode=train --logdir=output --num_epochs=10
-$ python3 run.py --mode=test --logdir=output
+$ python3 run.py --mode=train --logdir=model --num_epochs=10
+$ python3 run.py --mode=test --logdir=model
 ```
 The table below reports test loss for the best model (on validation set):
 
@@ -20,12 +18,10 @@ The table below reports test loss for the best model (on validation set):
 | 9     | 0.1642     | 0.1930          | 0.1666    |
 
 ### Sensitivity Analysis
-
 ```
-$ python3 run.py --mode=sens_anlys --logdir=output
+$ python3 run.py --mode=sens_anlys --logdir=model
 ```
 The table below reports covariate ranking by average absolute gradient for transition current -> paid off: 
-
 
 | Feature                                                        | Ave. Absolute Gradient |
 |:--------------------------------------------------------------:|:----------------------:|
@@ -60,3 +56,9 @@ The table below reports covariate ranking by average absolute gradient for trans
 | total days delinquent > 100 & < 130                            | 0.0172                 |
 | ARM contract details (X_static[33])                            | 0.0157                 |
 | ...                                                            | ...                    |
+
+### Analysis
+  * 1d Nonlinear relationship
+```
+$ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot
+```
