@@ -1,8 +1,9 @@
+import os
 import numpy as np
 import tensorflow as tf
-from src.model import *
-from src.data_layer import *
-from src.utils import *
+from src.model import Config, Model
+from src.data_layer import DataInRamInputLayer
+from src.utils import deco_print, deco_print_dict
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys')

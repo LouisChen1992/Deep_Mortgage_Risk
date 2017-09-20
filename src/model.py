@@ -95,6 +95,7 @@ class Model:
 			layer = Dense(units=self._config.num_category)
 			self._logits = layer(h_l)
 
+		self._prob = tf.nn.softmax(self._logits)
 		self._predict = tf.argmax(self._logits, axis=-1)
 
 	def _add_loss(self):
@@ -115,7 +116,6 @@ class Model:
 		self._train_op = optimizer.minimize(loss)
 
 	def _add_gradients(self):
-		self._prob = tf.nn.softmax(self._logits)
 		# sum of prob(v)
 		sum_prob_n = tf.split(value=tf.reduce_sum(self._prob, axis=0), num_or_size_splits=self._config.num_category)
 		self._x_gradients = [tf.gradients(prob_i, self._x_placeholder)[0] for prob_i in sum_prob_n]
