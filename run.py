@@ -6,7 +6,7 @@ from src.data_layer import DataInRamInputLayer
 from src.utils import deco_print, deco_print_dict
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys')
+tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys/sens_anlys_pair')
 tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
@@ -21,7 +21,7 @@ if FLAGS.mode == 'train':
 elif FLAGS.mode == 'test':
 	path = '/vol/Numpy_data_subprime_Test_new'
 	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
-elif FLAGS.mode == 'sens_anlys':
+elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair':
 	path = '/vol/Numpy_data_subprime_Test_new'
 	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
 else:
@@ -39,7 +39,7 @@ if FLAGS.mode == 'train':
 elif FLAGS.mode == 'test':
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
 	model = Model(config, is_training=False)
-elif FLAGS.mode == 'sens_anlys':
+elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair':
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
 	model = Model(config, is_training=False, is_analysis=True)
 deco_print('Read Following Config')
@@ -171,3 +171,7 @@ with tf.Session() as sess:
 		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'))
 		np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'), gradients)
 		deco_print('Sensitivity Analysis Finished')
+
+	elif FLAGS.mode == 'sens_anlys_pair':
+		deco_print('Executing Sensitivity Analysis (Pairs) Mode\n')
+		pass
