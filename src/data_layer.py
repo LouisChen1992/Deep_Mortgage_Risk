@@ -1,12 +1,39 @@
 import os
+import json
 import numpy as np
 
 class DataInRamInputLayer():
-	def __init__(self, path, mode):
+	def __init__(self, path, mode, load_file_list=True):
 		self._path = path
 		self._mode = mode
-		self._create_file_list()
-		self._epoch_step = 0
+		self._create_covariate_idx_associations()
+		if load_file_list:
+			self._create_file_list()
+			self._epoch_step = 0
+
+	def _create_covariate_idx_associations(self):
+		with open('src/covariate2idx_int.json', 'r') as f:
+			self._covariate2idx_int = json.load(f)
+			self._idx2covariate_int = {value:key for key, value in self._covariate2idx_int.items()}
+			self._covariate_count_int = len(self._covariate2idx_int.keys())
+
+		with open('src/covariate2idx_float.json', 'r') as f:
+			self._covariate2idx_float = json.load(f)
+			self._idx2covariate_float = {value:key for key, value in self._covariate2idx_float.items()}
+			self._covariate_count_float = len(self._covariate2idx_float.keys())
+
+		self._idx2covariate = {}
+		for key in self._idx2covariate_int.keys():
+			self._idx2covariate[key] = self._idx2covariate_int[key]
+		for key in self._idx2covariate_float.keys():
+			self._idx2covariate[key+self._covariate_count_int] = self._idx2covariate_float[key]
+		self._covariate_count = self._covariate_count_int + self._covariate_count_float
+		self._covariate2idx = {value:key for key, value in self._idx2covariate.items()}
+
+		with open('src/outcome2idx.json', 'r') as f:
+			self._outcome2idx = json.load(f)
+			self._idx2outcome = {value:key for key, value in self._outcome2idx.items()}
+			self._outcome_count = len(self._outcome2idx.keys())
 
 	def _create_file_list(self):
 		X_int_list = []
@@ -25,7 +52,7 @@ class DataInRamInputLayer():
 		self._num_file = len(self._X_int_list)
 		self._outseq = np.arange(self._num_file)
 
-	def iterate_one_epoch(self, batch_size):
+	def iterate_one_epoch(self, batch_size, output_current_status=False):
 		if self._mode == 'train':
 			np.random.shuffle(self._outseq)
 
@@ -52,4 +79,25 @@ class DataInRamInputLayer():
 					self._epoch_step += 1
 				batch_info = {'epoch_step':self._epoch_step,
 					'num_file':self._num_file, 'idx_file':idx}
-				yield X_input, Y_input, batch_info
+
+				if not output_current_status:
+					yield X_input, Y_input, batch_info
+				else:
+					### output current status
+					X_current_status = X_int_input[:,:5]
+					yield X_input, Y_input, batch_info, X_current_status
+
+	def calculate_feature_statistics(self):
+		moments = np.zeros((2, self._covariate_count))
+		count = 0
+		for idx_file in range(self._num_file):
+			X_int = np.load(os.path.join(self._path, self._X_int_list[idx_file]))
+			X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
+			assert(X_int.shape[0] == X_float.shape[0])
+			count += X_int.shape[0]
+
+			X = np.concatenate([X_int, X_float], axis=1)
+			moments[0] += np.sum(X, axis=0)
+			moments[1] += np.sum(X**2, axis=0)
+		self._mean = moments[0] / count
+		self._std = np.sqrt(moments[1] / count - self._mean ** 2)

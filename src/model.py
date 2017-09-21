@@ -1,5 +1,5 @@
 import time, os
-from utils import *
+from .utils import *
 import tensorflow as tf
 from tensorflow.python.layers.core import Dense
 from tensorflow.core.framework import summary_pb2
@@ -67,15 +67,18 @@ class Config:
 		return self._dropout
 
 class Model:
-	def __init__(self, config, force_var_reuse=False, is_training=True):
+	def __init__(self, config, force_var_reuse=False, is_training=True, is_analysis=False):
 		self._config = config
 		self._force_var_reuse = force_var_reuse
 		self._is_training = is_training
+		self._is_analysis = is_analysis
 		with tf.variable_scope(name_or_scope=tf.get_variable_scope(), reuse=self._force_var_reuse):
 			self._build_forward_pass_graph()
 		self._add_loss()
 		if self._is_training:
 			self._add_train_op()
+		if self._is_analysis:
+			self._add_gradients()
 
 	def _build_forward_pass_graph(self):
 		self._x_placeholder = tf.placeholder(dtype=tf.float32, shape=(self._config.batch_size, self._config.feature_dim), name='input_placeholder')
@@ -92,6 +95,7 @@ class Model:
 			layer = Dense(units=self._config.num_category)
 			self._logits = layer(h_l)
 
+		self._prob = tf.nn.softmax(self._logits)
 		self._predict = tf.argmax(self._logits, axis=-1)
 
 	def _add_loss(self):
@@ -110,3 +114,8 @@ class Model:
 
 		optimizer = tf.train.MomentumOptimizer(self._lr, self._config.momentum)
 		self._train_op = optimizer.minimize(loss)
+
+	def _add_gradients(self):
+		# sum of prob(v)
+		sum_prob_n = tf.split(value=tf.reduce_sum(self._prob, axis=0), num_or_size_splits=self._config.num_category)
+		self._x_gradients = [tf.gradients(prob_i, self._x_placeholder)[0] for prob_i in sum_prob_n]

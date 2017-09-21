@@ -1,13 +1,17 @@
+import os
+import numpy as np
 import tensorflow as tf
-from model import *
-from data_layer import *
-from utils import *
+from src.model import Config, Model
+from src.data_layer import DataInRamInputLayer
+from src.utils import deco_print, deco_print_dict
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test')
+tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys/sens_anlys_pair')
+tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
 
+### Create Data Layer
 deco_print('Creating Data Layer')
 if FLAGS.mode == 'train':
 	path = '/vol/Numpy_data_subprime_new'
@@ -17,22 +21,31 @@ if FLAGS.mode == 'train':
 elif FLAGS.mode == 'test':
 	path = '/vol/Numpy_data_subprime_Test_new'
 	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
+elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair':
+	path = '/vol/Numpy_data_subprime_Test_new'
+	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
 else:
 	raise ValueError('Mode Not Implemented')
 deco_print('Data Layer Created')
+###
 
+### Create Model
 deco_print('Creating Model')
 if FLAGS.mode == 'train':
 	config = Config(feature_dim=291, num_category=7, dropout=0.9)
 	model = Model(config)
 	config_valid = Config(feature_dim=291, num_category=7, dropout=1.0)
 	model_valid = Model(config_valid, force_var_reuse=True, is_training=False)
-else:
+elif FLAGS.mode == 'test':
 	config = Config(feature_dim=291, num_category=7, dropout=1.0)
 	model = Model(config, is_training=False)
+elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair':
+	config = Config(feature_dim=291, num_category=7, dropout=1.0)
+	model = Model(config, is_training=False, is_analysis=True)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
 deco_print('Model Created')
+###
 
 with tf.Session() as sess:
 	saver = tf.train.Saver(max_to_keep=50)
@@ -107,7 +120,7 @@ with tf.Session() as sess:
 			deco_print('Saving Epoch Checkpoint\n')
 			saver.save(sess, save_path=os.path.join(FLAGS.logdir, 'model-epoch'), global_step=epoch)
 
-	else:
+	elif FLAGS.mode == 'test':
 		deco_print('Executing Test Mode\n')
 		epoch_start = time.time()
 		cur_epoch_step = 0
@@ -129,3 +142,36 @@ with tf.Session() as sess:
 		deco_print('Test Loss: %f' %test_loss)
 		with open(os.path.join(FLAGS.logdir, 'loss.txt'), 'w') as f:
 			f.write('Test Loss: %f\n' %test_loss)
+
+	elif FLAGS.mode == 'sens_anlys':
+		deco_print('Executing Sensitivity Analysis Mode\n')
+		if FLAGS.sample_size == -100:
+			num_batch = float('inf')
+		else:
+			num_batch = FLAGS.sample_size / model._config.batch_size
+		count = np.zeros(shape=(5,), dtype=int)
+		gradients = np.zeros(shape=(5, model._config.num_category, model._config.feature_dim), dtype=float)
+		epoch_start = time.time()
+		cur_epoch_step = 0
+		for i, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
+			if i >= num_batch:
+				break
+			count += np.sum(x_cur, axis=0)
+			feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
+			gradients_i, = sess.run(fetches=[model._x_gradients], feed_dict=feed_dict)
+			for v in range(model._config.num_category):
+				gradients_i_v = gradients_i[v]
+				gradients[:,v,:] += x_cur.T.dot(np.absolute(gradients_i_v))
+			if info['epoch_step'] != cur_epoch_step:
+				epoch_last = time.time() - epoch_start
+				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+				deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
+				cur_epoch_step = info['epoch_step']
+		gradients /= count[:, np.newaxis, np.newaxis]
+		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'))
+		np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'), gradients)
+		deco_print('Sensitivity Analysis Finished')
+
+	elif FLAGS.mode == 'sens_anlys_pair':
+		deco_print('Executing Sensitivity Analysis (Pairs) Mode\n')
+		pass
