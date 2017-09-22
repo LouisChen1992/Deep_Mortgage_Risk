@@ -205,6 +205,7 @@ with tf.Session() as sess:
 					finite_diff = np.absolute(f_ij - f_i - f_j + f)
 					gradients[:,:,pair2idx[(i,j)]] += x_cur.T.dot(finite_diff)
 				sample_step += 1
+				print(info)
 				input()
 			if info['epoch_step'] != cur_epoch_step:
 				epoch_last = time.time() - epoch_start
