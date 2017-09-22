@@ -18,15 +18,18 @@ FLAGS = tf.flags.FLAGS
 deco_print('Creating Data Layer')
 if FLAGS.mode == 'train':
 	path = '/vol/Numpy_data_subprime_new'
-	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
+	dl = DataInRamInputLayer(path=path, shuffle=True)
 	path_valid = '/vol/Numpy_data_subprime_Val_new'
-	dl_valid = DataInRamInputLayer(path=path_valid, mode='valid')
+	dl_valid = DataInRamInputLayer(path=path_valid, shuffle=False)
 elif FLAGS.mode == 'test':
 	path = '/vol/Numpy_data_subprime_Test_new'
-	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
+	dl = DataInRamInputLayer(path=path, shuffle=False)
 elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair':
 	path = '/vol/Numpy_data_subprime_Test_new'
-	dl = DataInRamInputLayer(path=path, mode=FLAGS.mode)
+	if FLAGS.sample_size == -100:
+		dl = DataInRamInputLayer(path=path, shuffle=False)
+	else:
+		dl = DataInRamInputLayer(path=path, shuffle=True)
 else:
 	raise ValueError('Mode Not Implemented')
 deco_print('Data Layer Created')
@@ -177,10 +180,6 @@ with tf.Session() as sess:
 
 	elif FLAGS.mode == 'sens_anlys_pair':
 		deco_print('Executing Sensitivity Analysis (Pairs) Mode\n')
-		if FLAGS.sample_size == -100:
-			num_batch = float('inf')
-		else:
-			num_batch = FLAGS.sample_size / model._config.batch_size
 		count = np.zeros(shape=(5,), dtype=int)
 		###define pairs
 		num_feature_pairs = model._config.feature_dim * (model._config.feature_dim - 1) // 2
@@ -190,26 +189,29 @@ with tf.Session() as sess:
 
 		epoch_start = time.time()
 		cur_epoch_step = 0
-		for c, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
-			if c >= num_batch:
-				break
-			count += np.sum(x_cur, axis=0)
-			f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
-			for i, j in idx2pair:
-				x_copy = copy.deepcopy(x)
-				x_copy[:,i] += FLAGS.delta
-				f_i, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy})
-				x[:,j] += FLAGS.delta
-				f_j, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
-				x_copy[:,j] += FLAGS.delta
-				f_ij, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy})
-				finite_diff = np.absolute(f_ij - f_i - f_j + f)
-				gradients[:,:,pair2idx[(i,j)]] += x_cur.T.dot(finite_diff)
+		sample_step = 0
+		for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
+			if sample_step != FLAGS.sample_size:
+				count += np.sum(x_cur, axis=0)
+				f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
+				for i, j in idx2pair:
+					x_copy = copy.deepcopy(x)
+					x_copy[:,i] += FLAGS.delta
+					f_i, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy})
+					x[:,j] += FLAGS.delta
+					f_j, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
+					x_copy[:,j] += FLAGS.delta
+					f_ij, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy})
+					finite_diff = np.absolute(f_ij - f_i - f_j + f)
+					gradients[:,:,pair2idx[(i,j)]] += x_cur.T.dot(finite_diff)
+				sample_step += 1
+				input()
 			if info['epoch_step'] != cur_epoch_step:
 				epoch_last = time.time() - epoch_start
 				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
 				deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
 				cur_epoch_step = info['epoch_step']
+				sample_step = 0
 		gradients /= count[:, np.newaxis, np.newaxis]
 		gradients /= (FLAGS.delta ** 2)
 		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.npy'))
