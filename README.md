@@ -58,7 +58,12 @@ The table below reports covariate ranking by average absolute gradient for trans
 | ...                                                            | ...                    |
 
 ### Analysis
-  * 1d Nonlinear relationship
+  * 1d Nonlinear Relationship
 ```
 $ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot
+```
+
+  * 2d Nonlinear Relationship
+```
+$ python3 run_anlys.py --logdir=model --task=2d_nonlinear --plot_out=plot
 ```

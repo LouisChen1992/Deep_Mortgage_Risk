@@ -23,7 +23,7 @@ FLAGS = tf.flags.FLAGS
 deco_print('Creating Data Layer')
 path = '/vol/Numpy_data_subprime_Test_new'
 mode = 'analysis'
-dl = DataInRamInputLayer(path=path, mode=mode, load_file_list=False)
+dl = DataInRamInputLayer(path=path, shuffle=False, load_file_list=False)
 deco_print('Data Layer Created')
 ###
 
