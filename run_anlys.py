@@ -99,6 +99,15 @@ else:
 			for j in range(len(x)):
 				z[i,j] = f(x[i,j], y[i,j])
 
+		### contour plots
+		# plot_contour = plt.contourf(x,y,z)
+		# plt.xlabel(dl._idx2covariate[idx_x])
+		# plt.ylabel(dl._idx2covariate[idx_y])
+		# cbar = plt.colorbar(plot_contour)
+		# cbar.ax.set_ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
+		###
+
+		### 3d plots
 		fig = plt.figure()
 		ax = fig.gca(projection='3d')
 		surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
@@ -109,7 +118,8 @@ else:
 		ax.set_xlabel(dl._idx2covariate[idx_x])
 		ax.set_ylabel(dl._idx2covariate[idx_y])
 		ax.set_zlabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
+		###
+
 		plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d_z_%d.pdf' %(idx_x, idx_y, idx_output)))
-		# plt.show()
 	else:
 		raise ValueError('Task Not Supported! ')
