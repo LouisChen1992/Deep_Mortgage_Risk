@@ -1,4 +1,5 @@
 import os
+import copy
 import numpy as np
 import tensorflow as tf
 from src.model import Config, Model
@@ -9,6 +10,7 @@ tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys/sens_anlys_pair')
 tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
+tf.flags.DEFINE_float('delta', 1e-6, 'Delta')
 FLAGS = tf.flags.FLAGS
 
 ### Create Data Layer
@@ -174,4 +176,41 @@ with tf.Session() as sess:
 
 	elif FLAGS.mode == 'sens_anlys_pair':
 		deco_print('Executing Sensitivity Analysis (Pairs) Mode\n')
-		pass
+		if FLAGS.sample_size == -100:
+			num_batch = float('inf')
+		else:
+			num_batch = FLAGS.sample_size / model._config.batch_size
+		count = np.zeros(shape=(5,), dtype=int)
+		###define pairs
+		num_feature_pairs = model._config.feature_dim * (model._config.feature_dim - 1) // 2
+		idx2pair = [(i,j) for i in range(model._config.feature_dim-1) for j in range(i+1,model._config.feature_dim)]
+		pair2idx = {idx2pair[l]:l for l in range(num_feature_pairs)}
+		gradients = np.zeros(shape=(5, model._config.num_category, num_feature_pairs))
+
+		epoch_start = time.time()
+		cur_epoch_step = 0
+		for c, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
+			if c >= num_batch:
+				break
+			count += np.sum(x_cur, axis=0)
+			f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
+			for i, j in idx2pair:
+				x_copy = copy.deepcopy(x)
+				x_copy[:,i] += FLAGS.delta
+				f_i, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy})
+				x[:,j] += FLAGS.delta
+				f_j, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
+				x_copy[:,j] += FLAGS.delta
+				f_ij, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy})
+				finite_diff = np.absolute(f_ij - f_i - f_j + f)
+				gradients[:,:,pair2idx[(i,j)]] += x_cur.T.dot(finite_diff)
+			if info['epoch_step'] != cur_epoch_step:
+				epoch_last = time.time() - epoch_start
+				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+				deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
+				cur_epoch_step = info['epoch_step']
+		gradients /= count[:, np.newaxis, np.newaxis]
+		gradients /= (FLAGS.delta ** 2)
+		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.npy'))
+		np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.npy'), gradients)
+		deco_print('Sensitivity Analysis (Pairs) Finished')
