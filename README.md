@@ -23,7 +23,8 @@ $ python3 run.py --mode=sens_anlys --logdir=model
 $ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
 ```
 
-  * The table below reports covariate ranking by average absolute gradient for transition current -> paid off: 
+  * The first table below reports covariate ranking by average absolute gradient for transition current -> paid off. 
+  * The second table below reports covariate-pair ranking by average absolute mixed gradient (estimated by finite difference) for transition current -> paid off. 
 
 | Feature                                                        | Ave. Absolute Gradient |
 |:--------------------------------------------------------------:|:----------------------:|
@@ -58,8 +59,6 @@ $ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
 | total days delinquent > 100 & < 130                            | 0.0172                 |
 | ARM contract details (X_static[33])                            | 0.0157                 |
 | ...                                                            | ...                    |
-
-  * The table below reports covariate-pair ranking by average absolute mixed gradient (estimated by finite difference) for transition current -> paid off: 
   
 | Feature Pair                                                           | Ave. Absolute Mixed Gradient |
 |:----------------------------------------------------------------------:|:----------------------------:|
@@ -96,12 +95,7 @@ $ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
 | ...                                                                    | ...                          |
 
 ### Analysis
-  * 1d Nonlinear Relationship
 ```
-$ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot
-```
-
-  * 2d Nonlinear Relationship
-```
-$ python3 run_anlys.py --logdir=model --task=2d_nonlinear --plot_out=plot
+$ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot # 1d Nonlinear Relationship
+$ python3 run_anlys.py --logdir=model --task=2d_nonlinear --plot_out=plot # 2d Nonlinear Relationship
 ```
