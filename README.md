@@ -59,41 +59,41 @@ $ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
 | ARM contract details (X_static[33])                            | 0.0157                 |
 | ...                                                            | ...                    |
 
-  * The table below reports covariate-pair ranking by average absolute mixed gradient for transition current -> paid off: 
+  * The table below reports covariate-pair ranking by average absolute mixed gradient (estimated by finite difference) for transition current -> paid off: 
   
-| Feature Pair                                                           | Ave. Absolute Gradient |
-|:----------------------------------------------------------------------:|:----------------------:|
-| original interest rate, state unemployment rate                        | 0.00133                |
-| original interest rate, number of occurrences of C                     | 0.00121                |
-| original interest rate, original term of the loan                      | 0.00100                |
-| fico score, original interest rate                                     | 0.00087                |
-| number of occurrences of C, original term of the loan                  | 0.00086                |
-| state unemployment rate, original term of the loan                     | 0.00069                |
-| number of occurrences of C, state unemployment rate                    | 0.00067                |
-| fico score, original term of the loan                                  | 0.00065                |
-| fico score, state unemployment rate                                    | 0.00060                |
-| original interest rate, initial interest rate - national mortgate rate | 0.00059                |
-| fico score, number of occurrences of C                                 | 0.00059                |
-| original interest rate, original loan amount                           | 0.00055                |
-| original interest rate, margin for ARM mortgages (error)               | 0.00049                |
-| original loan amount, original term of the loan                        | 0.00048                |
-| original interest rate, current outstanding balance                    | 0.00043                |
-| original interest rate, scheduled principle due (error)                | 0.00042                |
-| original LTV, original term of the loan                                | 0.00041                |
-| state unemployment rate, scheduled principle due (error)               | 0.00040                |
-| original term of the loan, current outstanding balance                 | 0.00040                |
-| original LTV, original interest rate                                   | 0.00040                |
-| state unemployment rate, margin for ARM mortgages (error)              | 0.00038                |
-| original term of the loan, scheduled principle due (error)             | 0.00037                |
-| fico score, original loan amount                                       | 0.00037                |
-| original loan amount, state unemployment rate                          | 0.00037                |
-| original term of the loan, num_IO_mon (error)                          | 0.00035                |
-| original interest rate, num_IO_mon (error)                             | 0.00035                |
-| original term of the loan, margin for ARM mortgages (error)            | 0.00035                |
-| original loan amount, current outstanding balance                      | 0.00033                |
-| original interest rate, lagged prepayment rate                         | 0.00032                |
-| original loan amount, number of occurrences of C                       | 0.00031                |
-| ...                                                                    | ...                    |
+| Feature Pair                                                           | Ave. Absolute Mixed Gradient |
+|:----------------------------------------------------------------------:|:----------------------------:|
+| original interest rate, state unemployment rate                        | 0.00133                      |
+| original interest rate, number of occurrences of C                     | 0.00121                      |
+| original interest rate, original term of the loan                      | 0.00100                      |
+| fico score, original interest rate                                     | 0.00087                      |
+| number of occurrences of C, original term of the loan                  | 0.00086                      |
+| state unemployment rate, original term of the loan                     | 0.00069                      |
+| number of occurrences of C, state unemployment rate                    | 0.00067                      |
+| fico score, original term of the loan                                  | 0.00065                      |
+| fico score, state unemployment rate                                    | 0.00060                      |
+| original interest rate, initial interest rate - national mortgate rate | 0.00059                      |
+| fico score, number of occurrences of C                                 | 0.00059                      |
+| original interest rate, original loan amount                           | 0.00055                      |
+| original interest rate, margin for ARM mortgages (error)               | 0.00049                      |
+| original loan amount, original term of the loan                        | 0.00048                      |
+| original interest rate, current outstanding balance                    | 0.00043                      |
+| original interest rate, scheduled principle due (error)                | 0.00042                      |
+| original LTV, original term of the loan                                | 0.00041                      |
+| state unemployment rate, scheduled principle due (error)               | 0.00040                      |
+| original term of the loan, current outstanding balance                 | 0.00040                      |
+| original LTV, original interest rate                                   | 0.00040                      |
+| state unemployment rate, margin for ARM mortgages (error)              | 0.00038                      |
+| original term of the loan, scheduled principle due (error)             | 0.00037                      |
+| fico score, original loan amount                                       | 0.00037                      |
+| original loan amount, state unemployment rate                          | 0.00037                      |
+| original term of the loan, num_IO_mon (error)                          | 0.00035                      |
+| original interest rate, num_IO_mon (error)                             | 0.00035                      |
+| original term of the loan, margin for ARM mortgages (error)            | 0.00035                      |
+| original loan amount, current outstanding balance                      | 0.00033                      |
+| original interest rate, lagged prepayment rate                         | 0.00032                      |
+| original loan amount, number of occurrences of C                       | 0.00031                      |
+| ...                                                                    | ...                          |
 
 ### Analysis
   * 1d Nonlinear Relationship
