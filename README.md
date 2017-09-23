@@ -20,6 +20,7 @@ The table below reports test loss for the best model (on validation set):
 ### Sensitivity Analysis
 ```
 $ python3 run.py --mode=sens_anlys --logdir=model
+$ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
 ```
 The table below reports covariate ranking by average absolute gradient for transition current -> paid off: 
 
