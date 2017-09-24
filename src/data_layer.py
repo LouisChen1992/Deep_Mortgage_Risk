@@ -3,9 +3,9 @@ import json
 import numpy as np
 
 class DataInRamInputLayer():
-	def __init__(self, path, mode, load_file_list=True):
+	def __init__(self, path, shuffle=False, load_file_list=True):
 		self._path = path
-		self._mode = mode
+		self._shuffle = shuffle
 		self._create_covariate_idx_associations()
 		if load_file_list:
 			self._create_file_list()
@@ -53,7 +53,7 @@ class DataInRamInputLayer():
 		self._outseq = np.arange(self._num_file)
 
 	def iterate_one_epoch(self, batch_size, output_current_status=False):
-		if self._mode == 'train':
+		if self._shuffle:
 			np.random.shuffle(self._outseq)
 
 		for idx in range(self._num_file):
@@ -65,7 +65,7 @@ class DataInRamInputLayer():
 			num_example = X_int.shape[0]
 			num_batch = num_example // batch_size
 			idx_example = np.arange(num_example)
-			if self._mode == 'train':
+			if self._shuffle:
 				np.random.shuffle(idx_example)
 
 			for idx_batch in range(num_batch):
