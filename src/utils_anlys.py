@@ -57,3 +57,11 @@ def feature_ranking_pair(logdir, idx2covariate, idx2pair, num=30, status_in=0, s
 	gradient_sorted = [(idx2pair[idx], grad) for idx, grad in gradient_sorted]
 	gradient_sorted = [(pair, (idx2covariate[pair[0]],idx2covariate[pair[1]]), grad) for pair, grad in gradient_sorted]
 	return gradient_sorted[:num]
+
+def feature_ranking_trio(logdir, idx2covariate, idx2trio, num=30, status_in=0, status_out=1):
+	gradient = np.load(os.path.join(logdir, 'ave_absolute_gradient_3.npy'))
+	gradient = gradient[status_in, status_out]
+	gradient_sorted = sorted([(i, gradient[i]) for i in range(len(gradient))], key=lambda t:-t[1])
+	gradient_sorted = [(idx2trio[idx], grad) for idx, grad in gradient_sorted]
+	gradient_sorted = [(trio, (idx2covariate[trio[0]],idx2covariate[trio[1]],idx2covariate[trio[2]]), grad) for trio, grad in gradient_sorted]
+	return gradient_sorted[:num]

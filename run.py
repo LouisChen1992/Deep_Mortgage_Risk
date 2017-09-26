@@ -238,57 +238,62 @@ with tf.Session() as sess:
 	elif FLAGS.mode == 'sens_anlys_trio':
 		deco_print('Executing Sensitivity Analysis (Trios) Mode')
 		deco_print('Consider Real-Valued Trios With Important Variables Only\n')
-		count = np.zeros(shape=(5,), dtype=int)
 
 		### real-valued trios
 		num_import_features = 20
-
 		important_features = feature_ranking(FLAGS.logdir, dl._idx2covariate, num=num_import_features, float_feature_only=True)
 		num_feature_trios = num_import_features * (num_import_features - 1) * (num_import_features - 2) // 6
-		idx2pair = [(i,j,k) for i in range(num_import_features - 2) for j in range(i+1,num_import_features-1) for k in range(j+1,num_import_features)]
-		pair2idx = {idx2pair[l]:l for l in range(num_feature_trios)}
-		gradients = np.zeros(shape=(5, model._config.num_category, num_feature_trios))
+		idx2trio = [(i,j,k) for i in range(num_import_features - 2) for j in range(i+1,num_import_features-1) for k in range(j+1,num_import_features)]
+		trio2idx = {idx2trio[l]:l for l in range(num_feature_trios)}
 		###
 
-		epoch_start = time.time()
-		cur_epoch_step = 0
-		sample_step = 0
-		for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
-			if sample_step != FLAGS.sample_size:
-				count += np.sum(x_cur, axis=0)
-				f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
-				for i, j, k in idx2pair:
-					x_copy_1 = copy.deepcopy(x)
-					x_copy_2 = copy.deepcopy(x)
-					x_copy_3 = copy.deepcopy(x)
-					### 1 delta
-					x_copy_1[:,i] *= FLAGS.delta
-					f_i, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
-					x_copy_2[:,j] *= FLAGS.delta
-					f_j, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_2})
-					x_copy_3[:,k] *= FLAGS.delta
-					f_k, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_3})
-					### 2 delta
-					x_copy_1[:,j] *= FLAGS.delta
-					f_ij, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
-					x_copy_2[:,k] *= FLAGS.delta
-					f_jk, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_2})
-					x_copy_3[:,i] *= FLAGS.delta
-					f_ki, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_3})
-					### 3 delta
-					x_copy_1[:,k] *= FLAGS.delta
-					f_ijk, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
+		if not os.path.exists(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy')):
+			count = np.zeros(shape=(5,), dtype=int)
+			gradients = np.zeros(shape=(5, model._config.num_category, num_feature_trios))
+			epoch_start = time.time()
+			cur_epoch_step = 0
+			sample_step = 0
+			for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
+				if sample_step != FLAGS.sample_size:
+					count += np.sum(x_cur, axis=0)
+					f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
+					for i, j, k in idx2trio:
+						x_copy_1 = copy.deepcopy(x)
+						x_copy_2 = copy.deepcopy(x)
+						x_copy_3 = copy.deepcopy(x)
+						### 1 delta
+						x_copy_1[:,i] *= FLAGS.delta
+						f_i, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
+						x_copy_2[:,j] *= FLAGS.delta
+						f_j, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_2})
+						x_copy_3[:,k] *= FLAGS.delta
+						f_k, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_3})
+						### 2 delta
+						x_copy_1[:,j] *= FLAGS.delta
+						f_ij, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
+						x_copy_2[:,k] *= FLAGS.delta
+						f_jk, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_2})
+						x_copy_3[:,i] *= FLAGS.delta
+						f_ki, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_3})
+						### 3 delta
+						x_copy_1[:,k] *= FLAGS.delta
+						f_ijk, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
 
-					finite_diff = np.absolute(f_ijk - f_ij - f_jk - f_ki + f_i + f_j + f_k - f)
-					gradients[:,:,pair2idx[(i,j,k)]] += x_cur.T.dot(finite_diff)
-				sample_step += 1
-			if info['epoch_step'] != cur_epoch_step:
-				epoch_last = time.time() - epoch_start
-				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
-				deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
-				cur_epoch_step = info['epoch_step']
-				sample_step = 0
-		gradients /= count[:, np.newaxis, np.newaxis]
-		deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy'))
-		np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy'), gradients)
+						finite_diff = np.absolute(f_ijk - f_ij - f_jk - f_ki + f_i + f_j + f_k - f)
+						gradients[:,:,trio2idx[(i,j,k)]] += x_cur.T.dot(finite_diff)
+					sample_step += 1
+				if info['epoch_step'] != cur_epoch_step:
+					epoch_last = time.time() - epoch_start
+					time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+					deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
+					cur_epoch_step = info['epoch_step']
+					sample_step = 0
+			gradients /= count[:, np.newaxis, np.newaxis]
+			deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy'))
+			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy'), gradients)
+
+		deco_print('Top 30: ')
+		top_covariate = feature_ranking_trio(FLAGS.logdir, dl._idx2covariate, idx2trio)
+		for item in top_covariate:
+			print(item)
 		deco_print('Sensitivity Analysis (Trios) Finished')
