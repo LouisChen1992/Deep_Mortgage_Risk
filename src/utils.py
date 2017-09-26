@@ -1,5 +1,7 @@
+import six
+
 def deco_print(line, end='\n'):
-	print('>==================> ' + line, end=end)
+	six.print_('>==================> ' + line, end=end)
 
 def deco_print_dict(dic):
 	for key, value in dic.items():

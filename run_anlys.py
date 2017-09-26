@@ -136,17 +136,19 @@ else:
 		### construct nonlinear function
 		f = construct_nonlinear_function(sess, model, mean, idx_output, idx_x=idx_x, idx_y=idx_y, idx_z=idx_z, factor_x=factor_x, factor_y=factor_y, factor_z=factor_z)
 		###
-		x, y, z = np.mgrid[x_idx_left:x_idx_right:51j, y_idx_left:y_idx_right:51j, z_idx_left:z_idx_right:51j]
-		v = np.zeros((51, 51, 51))
-		for i in range(51):
-			for j in range(51):
-				for k in range(51):
+		x, y, z = np.mgrid[x_idx_left:x_idx_right:11j, y_idx_left:y_idx_right:11j, z_idx_left:z_idx_right:11j]
+		v = np.zeros((11, 11, 11))
+		for i in range(11):
+			for j in range(11):
+				for k in range(11):
 					v[i,j,k] = f(x[i,j,k], y[i,j,k], z[i,j,k])
 		### import mayavi
 		from mayavi import mlab
 		###
-		mlab.contour3d(v, opacity=0.5)
-		mlab.axes()
+		mlab.contour3d(x, y, z, v, contours=10, extent=[0,1,0,1,0,1], opacity=0.5)
+		mlab.outline()
+		mlab.colorbar(orientation='vertical')
+		mlab.axes(ranges=[x_idx_left, x_idx_right, y_idx_left, y_idx_right, z_idx_left, z_idx_right], xlabel=dl._idx2covariate[idx_x], ylabel=dl._idx2covariate[idx_y], zlabel=dl._idx2covariate[idx_z])
 		mlab.show()
 	else:
 		raise ValueError('Task Not Supported! ')
