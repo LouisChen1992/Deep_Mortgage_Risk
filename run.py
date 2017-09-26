@@ -6,7 +6,7 @@ import tensorflow as tf
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
 from src.utils import deco_print, deco_print_dict
-from src.utils_anlys import feature_ranking, feature_ranking_pair
+from src.utils_anlys import feature_ranking, feature_ranking_pair, feature_ranking_trio
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys/sens_anlys_pair/sens_anlys_trio')
