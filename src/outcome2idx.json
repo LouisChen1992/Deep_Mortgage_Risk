@@ -1,9 +1,9 @@
 {
-	"R": 0,
-	"0": 1,
-	"C": 2,
-	"3": 3,
-	"6": 4,
-	"9": 5,
-	"F": 6
+	"REO": 0,
+	"Paid Off": 1,
+	"Current": 2,
+	"30 Days Delinquent": 3,
+	"60 Days Delinquent": 4,
+	"90+ Days Delinquent": 5,
+	"Foreclosed": 6
 }
