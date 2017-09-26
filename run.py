@@ -242,7 +242,7 @@ with tf.Session() as sess:
 		cur_epoch_step = 0
 		sample_step = 0
 		for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
-			if sample_step != FLAGS.sample_step:
+			if sample_step != FLAGS.sample_size:
 				count += np.sum(x_cur, axis=0)
 				f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
 				for i, j, k in idx2pair:
