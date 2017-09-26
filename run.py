@@ -188,7 +188,7 @@ with tf.Session() as sess:
 		pair2idx = {idx2pair[l]:l for l in range(num_feature_pairs)}
 		###
 
-		if not os.path.exists(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.py')):
+		if not os.path.exists(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.npy')):
 			gradients = np.zeros(shape=(5, model._config.num_category, num_feature_pairs))
 			epoch_start = time.time()
 			cur_epoch_step = 0
