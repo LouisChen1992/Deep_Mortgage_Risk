@@ -8,13 +8,18 @@ This repository contains implementations of a five-layer neural network for pred
   * Vtk v5.0+ (required for Mayavi)
   * Mayavi v4.5.0
   
-First install VTK with Homebrew, then install Mayavi with pip. 
+For MacOSX, first install VTK with Homebrew, then install Mayavi with pip. 
 ```
 $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install
 $ brew install vtk
 $ mkdir -p /Users/luyangchen/Library/Python/2.7/lib/python/site-packages
 $ echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/luyangchen/Library/Python/2.7/lib/python/site-packages/homebrew.pth
 $ brew install wxpython
+$ sudo pip install mayavi
+```
+For Linux, first install VTK, then install Mayavi. 
+```
+$ sudo apt-get install python-vtk
 $ sudo pip install mayavi
 ```
 For more 3D visualization, please refer to [LINK](http://www.sethanil.com/python-for-reseach/5). 
