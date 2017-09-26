@@ -17,6 +17,7 @@ $ echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' 
 $ brew install wxpython
 $ sudo pip install mayavi
 ```
+For more 3D visualization, please refer to [LINK](http://www.sethanil.com/python-for-reseach/5). 
 
 ### Train, Validation & Test
 ```
