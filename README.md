@@ -34,6 +34,7 @@ The table below reports test loss for the best model (on validation set):
 ```
 $ python3 run.py --mode=sens_anlys --logdir=model
 $ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
+$ python3 run.py --mode=sens_anlys_trio --logdir=model --sample_size=1
 ```
 
   * The first table below reports covariate ranking by average absolute gradient for transition current -> paid off. 
@@ -109,6 +110,7 @@ $ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
 
 ### Analysis
 ```
-$ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot # 1d Nonlinear Relationship
-$ python3 run_anlys.py --logdir=model --task=2d_nonlinear --plot_out=plot # 2d Nonlinear Relationship
+$ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot # 1d Nonlinear 3D Plot
+$ python3 run_anlys.py --logdir=model --task=2d_nonlinear --plot_out=plot # 2d Nonlinear 3D Plot
+$ python3 run_anlys.py --logdir=model --task=2d_contour --plot_out=plot # 2d Nonlinear Contour Plot
 ```
