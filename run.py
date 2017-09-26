@@ -243,7 +243,7 @@ with tf.Session() as sess:
 		num_import_features = 20
 		important_features = feature_ranking(FLAGS.logdir, dl._idx2covariate, num=num_import_features, float_feature_only=True)
 		num_feature_trios = num_import_features * (num_import_features - 1) * (num_import_features - 2) // 6
-		idx2trio = [(i,j,k) for i in range(num_import_features - 2) for j in range(i+1,num_import_features-1) for k in range(j+1,num_import_features)]
+		idx2trio = [(important_features[i],important_features[j],important_features[k]) for i in range(num_import_features - 2) for j in range(i+1,num_import_features-1) for k in range(j+1,num_import_features)]
 		trio2idx = {idx2trio[l]:l for l in range(num_feature_trios)}
 		###
 
