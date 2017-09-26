@@ -18,17 +18,24 @@ def decide_boundary(mean, std, x_left, x_right, factor=1.0):
 		x_right = float(x_right)
 	return x_left, x_right
 
-def construct_nonlinear_function(sess, model, x_freeze, idx_output, idx_x, idx_y=None, factor_x=1.0, factor_y=1.0):
+def construct_nonlinear_function(sess, model, x_freeze, idx_output, idx_x, idx_y=None, idx_z=None, factor_x=1.0, factor_y=1.0, factor_z=1.0):
 	x_input = copy.deepcopy(x_freeze)
 	if idx_y is None:
 		def f(x):
 			x_input[idx_x] = x / factor_x
 			prob, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_input[np.newaxis,:]})
 			return prob[0][idx_output]
-	else:
+	elif idx_z is None:
 		def f(x, y):
 			x_input[idx_x] = x / factor_x
 			x_input[idx_y] = y / factor_y
+			prob, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_input[np.newaxis,:]})
+			return prob[0][idx_output]
+	else:
+		def f(x, y, z):
+			x_input[idx_x] = x / factor_x
+			x_input[idx_y] = y / factor_y
+			x_input[idx_z] = z / factor_z
 			prob, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_input[np.newaxis,:]})
 			return prob[0][idx_output]
 	return f

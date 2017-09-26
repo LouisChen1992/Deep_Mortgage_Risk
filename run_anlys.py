@@ -15,7 +15,7 @@ from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('task', '', 'Task: cov_rank/1d_nonlinear/2d_nonlinear')
+tf.flags.DEFINE_string('task', '', 'Task: cov_rank/1d_nonlinear/2d_nonlinear/2d_contour/3d_contour')
 tf.flags.DEFINE_string('plot_out', '', 'Path to save plots')
 FLAGS = tf.flags.FLAGS
 
@@ -76,7 +76,7 @@ else:
 		plt.xlabel(dl._idx2covariate[idx])
 		plt.ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
 		plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d.pdf' %(idx, idx_output)))
-	elif FLAGS.task == '2d_nonlinear':
+	elif FLAGS.task == '2d_nonlinear' or FLAGS.task == '2d_contour':
 		idx_x = int(input('Enter Variate Idx For x (237 - 290): '))
 		idx_y = int(input('Enter Variate Idx For y (237 - 290): '))
 		idx_output = int(input('Enter Output Idx: (0 - 7): '))
@@ -98,28 +98,55 @@ else:
 		for i in range(len(y)):
 			for j in range(len(x)):
 				z[i,j] = f(x[i,j], y[i,j])
-
-		### contour plots
-		# plot_contour = plt.contourf(x,y,z)
-		# plt.xlabel(dl._idx2covariate[idx_x])
-		# plt.ylabel(dl._idx2covariate[idx_y])
-		# cbar = plt.colorbar(plot_contour)
-		# cbar.ax.set_ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
-		###
-
-		### 3d plots
-		fig = plt.figure()
-		ax = fig.gca(projection='3d')
-		surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-		ax.set_zlim(0, np.max(z))
-		ax.zaxis.set_major_locator(LinearLocator(10))
-		ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-		fig.colorbar(surf, shrink=0.5, aspect=5)
-		ax.set_xlabel(dl._idx2covariate[idx_x])
-		ax.set_ylabel(dl._idx2covariate[idx_y])
-		ax.set_zlabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
-		###
-
+		if FLAGS.task == '2d_nonlinear':
+			fig = plt.figure()
+			ax = fig.gca(projection='3d')
+			surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+			ax.set_zlim(0, np.max(z))
+			ax.zaxis.set_major_locator(LinearLocator(10))
+			ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+			fig.colorbar(surf, shrink=0.5, aspect=5)
+			ax.set_xlabel(dl._idx2covariate[idx_x])
+			ax.set_ylabel(dl._idx2covariate[idx_y])
+			ax.set_zlabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
+		elif FLAGS.task == '2d_contour':
+			plot_contour = plt.contourf(x,y,z)
+			plt.xlabel(dl._idx2covariate[idx_x])
+			plt.ylabel(dl._idx2covariate[idx_y])
+			cbar = plt.colorbar(plot_contour)
+			cbar.ax.set_ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
 		plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d_z_%d.pdf' %(idx_x, idx_y, idx_output)))
+	elif FLAGS.task == '3d_contour':
+		idx_x = int(input('Enter Variate Idx For x (237 - 290): '))
+		idx_y = int(input('Enter Variate Idx For y (237 - 290): '))
+		idx_z = int(input('Enter Variate Idx For z (237 - 290): '))
+		idx_output = int(input('Enter Output Idx: (0 - 7): '))
+		factor_x = float(input('Enter Amplification Factor For x: '))
+		factor_y = float(input('Enter Amplification Factor For y: '))
+		factor_z = float(input('Enter Amplification Factor For z: '))
+		x_idx_left = input('Enter Variate Lower Bound For x (default: mean - 3 * std): ')
+		x_idx_right = input('Enter Variate Upper Bound For x (default: mean + 3 * std): ')
+		y_idx_left = input('Enter Variate Lower Bound For y (default: mean - 3 * std): ')
+		y_idx_right = input('Enter Variate Upper Bound For y (default: mean + 3 * std): ')
+		z_idx_left = input('Enter Variate Lower Bound For z (default: mean - 3 * std): ')
+		z_idx_right = input('Enter Variate Upper Bound For z (default: mean + 3 * std): ')
+		x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, factor_x)
+		y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, factor_y)
+		z_idx_left, z_idx_right = decide_boundary(mean[idx_z], std[idx_z], z_idx_left, z_idx_right, factor_z)
+		### construct nonlinear function
+		f = construct_nonlinear_function(sess, model, mean, idx_output, idx_x=idx_x, idx_y=idx_y, idx_z=idx_z, factor_x=factor_x, factor_y=factor_y, factor_z=factor_z)
+		###
+		x, y, z = np.mgrid[x_idx_left:x_idx_right:51j, y_idx_left:y_idx_right:51j, z_idx_left:z_idx_right:51j]
+		v = np.zeros((51, 51, 51))
+		for i in range(51):
+			for j in range(51):
+				for k in range(51):
+					v[i,j,k] = f(x[i,j,k], y[i,j,k], z[i,j,k])
+		### import mayavi
+		from mayavi import mlab
+		###
+		mlab.contour3d(v, opacity=0.5)
+		mlab.axes()
+		mlab.show()
 	else:
 		raise ValueError('Task Not Supported! ')
