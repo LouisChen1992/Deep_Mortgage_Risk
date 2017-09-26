@@ -15,7 +15,7 @@ from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('task', '', 'Task: 1d_nonlinear/2d_nonlinear/2d_contour/3d_contour')
+tf.flags.DEFINE_string('task', '', 'Task: 1d_nonlinear/2d_nonlinear/2d_contour/3d_contour/3d_contour_slice')
 tf.flags.DEFINE_string('plot_out', '', 'Path to save plots')
 FLAGS = tf.flags.FLAGS
 
@@ -104,10 +104,10 @@ elif FLAGS.task == '2d_nonlinear' or FLAGS.task == '2d_contour':
 		ax.set_ylabel(dl._idx2covariate[idx_y])
 		ax.set_zlabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
 	elif FLAGS.task == '2d_contour':
-		plot_contour = plt.contourf(x,y,z)
+		im = plt.contourf(x,y,z)
 		plt.xlabel(dl._idx2covariate[idx_x])
 		plt.ylabel(dl._idx2covariate[idx_y])
-		cbar = plt.colorbar(plot_contour)
+		cbar = plt.colorbar(im)
 		cbar.ax.set_ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
 	plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d_z_%d.pdf' %(idx_x, idx_y, idx_output)))
 elif FLAGS.task == '3d_contour':
@@ -144,5 +144,51 @@ elif FLAGS.task == '3d_contour':
 	mlab.colorbar(orientation='vertical')
 	mlab.axes(ranges=[x_idx_left, x_idx_right, y_idx_left, y_idx_right, z_idx_left, z_idx_right], xlabel=dl._idx2covariate[idx_x], ylabel=dl._idx2covariate[idx_y], zlabel=dl._idx2covariate[idx_z])
 	mlab.show()
+elif FLAGS.task == '3d_contour_slice':
+	idx_x = int(input('Enter Variate Idx For x (237 - 290): '))
+	idx_y = int(input('Enter Variate Idx For y (237 - 290): '))
+	idx_z = int(input('Enter Variate Idx For z (237 - 290): '))
+	idx_output = int(input('Enter Output Idx: (0 - 7): '))
+	factor_x = float(input('Enter Amplification Factor For x: '))
+	factor_y = float(input('Enter Amplification Factor For y: '))
+	factor_z = float(input('Enter Amplification Factor For z: '))
+	x_idx_left = input('Enter Variate Lower Bound For x (default: mean - 3 * std): ')
+	x_idx_right = input('Enter Variate Upper Bound For x (default: mean + 3 * std): ')
+	y_idx_left = input('Enter Variate Lower Bound For y (default: mean - 3 * std): ')
+	y_idx_right = input('Enter Variate Upper Bound For y (default: mean + 3 * std): ')
+	z_idx_left = input('Enter Variate Lower Bound For z (default: mean - 3 * std): ')
+	z_idx_right = input('Enter Variate Upper Bound For z (default: mean + 3 * std): ')
+	x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, factor_x)
+	y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, factor_y)
+	z_idx_left, z_idx_right = decide_boundary(mean[idx_z], std[idx_z], z_idx_left, z_idx_right, factor_z)
+	x = np.linspace(x_idx_left, x_idx_right, 51)
+	y = np.linspace(y_idx_left, y_idx_right, 51)
+	zs = np.linspace(z_idx_left, z_idx_right, 4)
+	v = np.zeros((len(y), len(x), len(zs)))
+	x, y = np.meshgrid(x, y)
+	### 3d contour slice
+	fig = plt.figure()
+	ax = fig.gca(projection='3d')
+	mean_copy = copy.deepcopy(mean)
+	for k in range(len(zs)):
+		z = zs[k]
+		mean_copy[idx_z] = z / factor_z
+		f = construct_nonlinear_function(sess, model, mean_copy, idx_output, idx_x=idx_x, idx_y=idx_y, factor_x=factor_x, factor_y=factor_y)
+		for i in range(len(y)):
+			for j in range(len(x)):
+				v[i,j,k] = f(x[i,j], y[i,j])
+	levels = np.linspace(np.min(v),np.max(v),10)
+	for k in range(len(zs)):
+		z = zs[k]
+		im = ax.contourf(x, y, v[:,:,k], offset=z, levels=levels)
+	ax.set_xlabel(dl._idx2covariate[idx_x])
+	ax.set_ylabel(dl._idx2covariate[idx_y])
+	ax.set_zlabel(dl._idx2covariate[idx_z])
+	ax.set_xlim(x_idx_left, x_idx_right)
+	ax.set_ylim(y_idx_left, y_idx_right)
+	ax.set_zlim(z_idx_left, z_idx_right)
+	cbar = plt.colorbar(im)
+	cbar.ax.set_ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
+	plt.show()
 else:
 	raise ValueError('Task Not Supported! ')
