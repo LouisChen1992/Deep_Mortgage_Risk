@@ -49,3 +49,11 @@ def feature_ranking(logdir, idx2covariate, num=30, status_in=0, status_out=1, fl
 	if float_feature_only:
 		gradient_sorted = [item for item in gradient_sorted if item[0] >= 237]
 	return gradient_sorted[:num]
+
+def feature_ranking_pair(logdir, idx2covariate, idx2pair, num=30, status_in=0, status_out=1):
+	gradient = np.load(os.path.join(logdir, 'ave_absolute_gradient_2.npy'))
+	gradient = gradient[status_in, status_out]
+	gradient_sorted = sorted([(i, gradient[i]) for i in range(len(gradient))], key=lambda t:-t[1])
+	gradient_sorted = [(idx2pair[idx], grad) for idx, grad in gradient_sorted]
+	gradient_sorted = [(pair, (idx2covariate[pair[0]],idx2covariate[pair[1]]), grad) for pair, grad in gradient_sorted]
+	return gradient_sorted[:num]
