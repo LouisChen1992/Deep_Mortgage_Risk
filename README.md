@@ -42,76 +42,76 @@ $ python3 run.py --mode=sens_anlys_pair --logdir=model --sample_size=1
 $ python3 run.py --mode=sens_anlys_trio --logdir=model --sample_size=1
 ```
 
-  * The first table below reports covariate ranking by average absolute gradient for transition current -> paid off. 
-  * The second table below reports covariate-pair ranking by average absolute mixed gradient (estimated by finite difference) for transition current -> paid off. 
+  * The first table below reports covariate (float) ranking by average absolute gradient for transition current -> paid off. 
+  * The second table below reports covariate-pair (float) ranking by average absolute mixed gradient (estimated by finite difference) for transition current -> paid off. 
 
-| Feature                                                        | Ave. Absolute Gradient |
-|:--------------------------------------------------------------:|:----------------------:|
-| current outstanding balance                                    | 0.1878                 |
-| original loan amount                                           | 0.0856                 |
-| original interest rate                                         | 0.0503                 |
-| current interest rate as well - national mortgage rate as well | 0.0478                 |
-| initial interest rate - national mortgate rate                 | 0.0463                 |
-| housing price increase/decrease since origination              | 0.0386                 |
-| number of occurrences of 3                                     | 0.0384                 |
-| scheduled principle and interest due                           | 0.0364                 |
-| number of occurrences of 6                                     | 0.0362                 |
-| zillow housing prices (macro_data[21] != 0)                    | 0.0346                 |
-| total days delinquent >= 160                                   | 0.0322                 |
-| time since origination                                         | 0.0306                 |
-| ARM first rate reset period                                    | 0.0295                 |
-| fico score                                                     | 0.0293                 |
-| lagged prepayment rate                                         | 0.0292                 |
-| number of occurrences of 9                                     | 0.0237                 |
-| current interest rate - original interest rate                 | 0.0228                 |
-| total days delinquent >= 130 & < 160                           | 0.0225                 |
-| state unemployment rate                                        | 0.0214                 |
-| total days delinquent                                          | 0.0195                 |
-| ARM contract details (X_static[37])                            | 0.0191                 |
-| lagged default rate                                            | 0.0190                 |
-| total number of prime mortgages currently alive                | 0.0190                 |
-| lien type == 5                                                 | 0.0185                 |
-| channel type == 8                                              | 0.0181                 |
-| current delinquency status == 6                                | 0.0180                 |
-| current delinquency status == 3                                | 0.0177                 |
-| current delinquency status == 9                                | 0.0177                 |
-| total days delinquent > 100 & < 130                            | 0.0172                 |
-| ARM contract details (X_static[33])                            | 0.0157                 |
-| ...                                                            | ...                    |
+| Feature                                                               | Ave. Absolute Gradient |
+|:---------------------------------------------------------------------:|:----------------------:|
+| Current Outstanding Balance                                           | 0.1878                 |
+| Original Loan Balance                                                 | 0.0856                 |
+| Original Interest Rate                                                | 0.0503                 |
+| Current Interest Rate - National Mortgage Rate                        | 0.0478                 |
+| Original Interest Rate - National Mortgate Rate                       | 0.0463                 |
+| Zillow Zip Code Housing Price Change Since Origination                | 0.0386                 |
+| Number of Times 30 Days Delinquent in Last 12 Months                  | 0.0384                 |
+| Scheduled Interest and Principle Due                                  | 0.0364                 |
+| Number of Times 60 Days Delinquent in Last 12 Months                  | 0.0362                 |
+| Zillow Housing Prices (macro_data[21] != 0)                           | 0.0346                 |
+| Time Since Origination                                                | 0.0306                 |
+| ARM First Rate Reset Period                                           | 0.0295                 |
+| FICO Score                                                            | 0.0293                 |
+| Lagged Prime Prepayment Rate in Same Zip Code                         | 0.0292                 |
+| Number of Times 90+ Days Delinquent in Last 12 Months                 | 0.0237                 |
+| Current Interest Rate - Original Interest Rate                        | 0.0228                 |
+| State Unemployment Rate                                               | 0.0214                 |
+| Number of Days Delinquent                                             | 0.0195                 |
+| ARM Contract Details (X_static[37])                                   | 0.0191                 |
+| Lagged Prime Default Rate in Same Zip Code                            | 0.0190                 |
+| Total Number of Prime Mortgages in Same Zip Code                      | 0.0190                 |
+| ARM Contract Details (X_static[33])                                   | 0.0157                 |
+| Number of Times Current in Last 12 Months                             | 0.0145                 |
+| ARM Contract Details (X_static[32])                                   | 0.0133                 |
+| Original Appraised Value                                              | 0.0132                 |
+| Original Interest Rate - National Mortgage Rate at Origination        | 0.0129                 |
+| LTV Ratio                                                             | 0.0116                 |
+| Lagged Default Rate for Subprime Mortgages in Same Zip Code (>= 1000) | 0.0115                 |
+| Zillow Housing Prices (macro_data[20] != 0)                           | 0.0110                 |
+| ARM Contract Details (X_static[34])                                   | 0.0107                 |
+| ...                                                                   | ...                    |
   
-| Feature Pair                                                           | Ave. Absolute Mixed Gradient |
-|:----------------------------------------------------------------------:|:----------------------------:|
-| original interest rate, state unemployment rate                        | 0.00133                      |
-| original interest rate, number of occurrences of C                     | 0.00121                      |
-| original interest rate, original term of the loan                      | 0.00100                      |
-| fico score, original interest rate                                     | 0.00087                      |
-| number of occurrences of C, original term of the loan                  | 0.00086                      |
-| state unemployment rate, original term of the loan                     | 0.00069                      |
-| number of occurrences of C, state unemployment rate                    | 0.00067                      |
-| fico score, original term of the loan                                  | 0.00065                      |
-| fico score, state unemployment rate                                    | 0.00060                      |
-| original interest rate, initial interest rate - national mortgate rate | 0.00059                      |
-| fico score, number of occurrences of C                                 | 0.00059                      |
-| original interest rate, original loan amount                           | 0.00055                      |
-| original interest rate, margin for ARM mortgages (error)               | 0.00049                      |
-| original loan amount, original term of the loan                        | 0.00048                      |
-| original interest rate, current outstanding balance                    | 0.00043                      |
-| original interest rate, scheduled principle due (error)                | 0.00042                      |
-| original LTV, original term of the loan                                | 0.00041                      |
-| state unemployment rate, scheduled principle due (error)               | 0.00040                      |
-| original term of the loan, current outstanding balance                 | 0.00040                      |
-| original LTV, original interest rate                                   | 0.00040                      |
-| state unemployment rate, margin for ARM mortgages (error)              | 0.00038                      |
-| original term of the loan, scheduled principle due (error)             | 0.00037                      |
-| fico score, original loan amount                                       | 0.00037                      |
-| original loan amount, state unemployment rate                          | 0.00037                      |
-| original term of the loan, num_IO_mon (error)                          | 0.00035                      |
-| original interest rate, num_IO_mon (error)                             | 0.00035                      |
-| original term of the loan, margin for ARM mortgages (error)            | 0.00035                      |
-| original loan amount, current outstanding balance                      | 0.00033                      |
-| original interest rate, lagged prepayment rate                         | 0.00032                      |
-| original loan amount, number of occurrences of C                       | 0.00031                      |
-| ...                                                                    | ...                          |
+| Feature Pair                                                            | Ave. Absolute Mixed Gradient |
+|:-----------------------------------------------------------------------:|:----------------------------:|
+| Original Interest Rate, State Unemployment Rate                         | 0.00133                      |
+| Original Interest Rate, Number of Times Current in Last 12 Months       | 0.00121                      |
+| Original Interest Rate, Original Term of the Loan                       | 0.00100                      |
+| FICO Score, Original Interest Rate                                      | 0.00087                      |
+| Number of Times Current in Last 12 Months, Original Term of the Loan    | 0.00086                      |
+| State Unemployment Rate, Original Term of the Loan                      | 0.00069                      |
+| Number of Times Current in Last 12 Months, State Unemployment Rate      | 0.00067                      |
+| FICO Score, Original Term of the Loan                                   | 0.00065                      |
+| FICO Score, State Unemployment Rate                                     | 0.00060                      |
+| Original Interest Rate, Original Interest Rate - National Mortgate Rate | 0.00059                      |
+| FICO Score, Number of Times Current in Last 12 Months                   | 0.00059                      |
+| Original Interest Rate, Original Loan Balance                           | 0.00055                      |
+| Original Interest Rate, Margin for ARM Mortgages (Error)                | 0.00049                      |
+| Original Loan Balance, Original Term of the Loan                        | 0.00048                      |
+| Original Interest Rate, Current Outstanding Balance                     | 0.00043                      |
+| Original Interest Rate, Scheduled Principle Due (Error)                 | 0.00042                      |
+| LTV Ratio, Original Term of the Loan                                    | 0.00041                      |
+| State Unemployment Rate, Scheduled Principle Due (Error)                | 0.00040                      |
+| Original Term of the Loan, Current Outstanding Balance                  | 0.00040                      |
+| LTV Ratio, Original Interest Rate                                       | 0.00040                      |
+| State Unemployment Rate, Margin for ARM Mortgages (Error)               | 0.00038                      |
+| Original Term of the Loan, Scheduled Principle Due (Error)              | 0.00037                      |
+| FICO Score, Original Loan Balance                                       | 0.00037                      |
+| Original Loan Balance, State Unemployment Rate                          | 0.00037                      |
+| Original Term of the Loan, Num_IO_mon (error)                           | 0.00035                      |
+| Original Interest Rate, Num_IO_mon (error)                              | 0.00035                      |
+| Original Term of the Loan, Margin for ARM Mortgages (Error)             | 0.00035                      |
+| Original Loan Balance, Current Outstanding Balance                      | 0.00033                      |
+| Original Interest Rate, Lagged Prime Prepayment Rate in Same Zip Code   | 0.00032                      |
+| Original Loan Balance, Number of Times Current in Last 12 Months        | 0.00031                      |
+| ...                                                                     | ...                          |
 
 ### Analysis
 ```
