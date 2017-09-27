@@ -179,7 +179,7 @@ with tf.Session() as sess:
 			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'), gradients)
 
 		deco_print('Top 30:')
-		top_covariate = feature_ranking(FLAGS.logdir, dl._idx2covariate)
+		top_covariate = feature_ranking(FLAGS.logdir, dl._idx2covariate, float_feature_only=True)
 		for item in top_covariate:
 			print(item)
 		deco_print('Sensitivity Analysis Finished')
