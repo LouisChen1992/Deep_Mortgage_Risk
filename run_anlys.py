@@ -142,7 +142,8 @@ elif FLAGS.task == '3d_contour':
 	mlab.contour3d(x, y, z, v, contours=10, extent=[0,1,0,1,0,1], opacity=0.5)
 	mlab.outline()
 	mlab.colorbar(orientation='vertical')
-	mlab.axes(ranges=[x_idx_left, x_idx_right, y_idx_left, y_idx_right, z_idx_left, z_idx_right], xlabel=dl._idx2covariate[idx_x], ylabel=dl._idx2covariate[idx_y], zlabel=dl._idx2covariate[idx_z])
+	# mlab.axes(ranges=[x_idx_left, x_idx_right, y_idx_left, y_idx_right, z_idx_left, z_idx_right], xlabel=dl._idx2covariate[idx_x], ylabel=dl._idx2covariate[idx_y], zlabel=dl._idx2covariate[idx_z])
+	mlab.axes(ranges=[x_idx_left, x_idx_right, y_idx_left, y_idx_right, z_idx_left, z_idx_right])
 	mlab.show()
 elif FLAGS.task == '3d_contour_slice':
 	idx_x = int(input('Enter Variate Idx For x (237 - 290): '))
