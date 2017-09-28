@@ -153,4 +153,6 @@ $ python3 run.py --mode=sens_anlys_trio --logdir=model --sample_size=1
 $ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot # 1d Nonlinear 3D Plot
 $ python3 run_anlys.py --logdir=model --task=2d_nonlinear --plot_out=plot # 2d Nonlinear 3D Plot
 $ python3 run_anlys.py --logdir=model --task=2d_contour --plot_out=plot # 2d Nonlinear Contour Plot
+$ python run_anlys.py --logdir=model --task=3d_contour --plot_out=plot # 3d Nonlinear Contour Plot
+$ python3 run_anlys.py --logdir=model --task=3d_contour_slice --plot_out=plot # 3d Nonlinear Contour Slices
 ```
