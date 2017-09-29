@@ -37,7 +37,7 @@ deco_print('Model Created')
 ###
 
 with tf.Session() as sess:
-	saver = tf.train.Saver(max_to_keep=50):
+	saver = tf.train.Saver(max_to_keep=50)
 	if tf.train.latest_checkpoint(FLAGS.logdir) is not None:
 		saver.restore(sess, tf.train.latest_checkpoint(FLAGS.logdir))
 		deco_print('Restored Checkpoint')
