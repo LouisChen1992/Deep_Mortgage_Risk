@@ -2,6 +2,7 @@ import os
 import time
 import copy
 import numpy as np
+import tensorflow as tf
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
 from src.utils import deco_print, deco_print_dict
