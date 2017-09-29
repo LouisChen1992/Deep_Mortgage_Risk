@@ -43,10 +43,6 @@ $ python3 run.py --mode=sens_anlys_trio --logdir=model --sample_size=1
 ```
 Analysis results can be found in the folder "sens_anlys_output". 
 
-  * The first table below reports covariate (float) ranking by average absolute gradient for transition current -> paid off. 
-  * The second table below reports covariate-pair (float) ranking by average absolute mixed gradient (estimated by finite difference) for transition current -> paid off. 
-  * The third table below reports covariate-trio (float) ranking by average absolute mixed gradient (estimated by finite difference) for transition current -> paid off. 
-
 ### Analysis
 ```
 $ python3 run_anlys.py --logdir=model --task=1d_nonlinear --plot_out=plot # 1d Nonlinear 3D Plot
