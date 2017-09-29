@@ -40,3 +40,37 @@
 
 ------
 ### current -> 30 days delinquent
+
+| Feature Pair                                                                      | Ave. Absolute Mixed Gradient |
+|:---------------------------------------------------------------------------------:|:----------------------------:|
+| FICO Score, Original Term of the Loan                                             | 0.00168                      |
+| Original Interest Rate, Original Term of the Loan                                 | 0.00128                      |
+| Number of Times Current in Last 12 Months, Original Term of the Loan              | 0.00127                      |
+| State Unemployment Rate, Original Term of the Loan                                | 0.00091                      |
+| Original Term of the Loan, Scheduled Principle Due (Error)                        | 0.00066                      |
+| Original Term of the Loan, Num_IO_mon (error)                                     | 0.00066                      |
+| Original Term of the Loan, Margin for ARM Mortgages (Error)                       | 0.00060                      |
+| FICO Score, Original Interest Rate                                                | 0.00058                      |
+| LTV Ratio, Original Term of the Loan                                              | 0.00048                      |
+| Original Term of the Loan, Current Outstanding Balance                            | 0.00040                      |
+| Original Interest Rate, State Unemployment Rate                                   | 0.00037                      |
+| Original Loan Balance, Original Term of the Loan                                  | 0.00035                      |
+| FICO Score, LTV Ratio                                                             | 0.00033                      |
+| FICO Score, Number of Times Current in Last 12 Months                             | 0.00030                      |
+| FICO Score, State Unemployment Rate                                               | 0.00028                      |
+| Original Interest Rate, Number of Times Current in Last 12 Months                 | 0.00026                      |
+| Original Interest Rate - National Mortgate Rate, Original Term of the Loan        | 0.00025                      |
+| LTV Ratio, Original Interest Rate                                                 | 0.00025                      |
+| Original Interest Rate, Original Interest Rate - National Mortgate Rate           | 0.00024                      |
+| FICO Score, Current Outstanding Balance                                           | 0.00024                      |
+| FICO Score, Original Loan Balance                                                 | 0.00021                      |
+| Original Term of the Loan, Zillow Zip Code Housing Price Change Since Origination | 0.00019                      |
+| Original Interest Rate, Current Outstanding Balance                               | 0.00016                      |
+| LTV Ratio, Number of Times Current in Last 12 Months                              | 0.00016                      |
+| Number of Times Current in Last 12 Months, State Unemployment Rate                | 0.00015                      |
+| LTV Ratio, State Unemployment Rate                                                | 0.00015                      |
+| Original Interest Rate, Original Loan Balance                                     | 0.00015                      |
+| Original Interest Rate, Margin for ARM Mortgages (Error)                          | 0.00014                      |
+| FICO Score, Original Interest Rate - National Mortgate Rate                       | 0.00014                      |
+| FICO Score, Margin for ARM Mortgages (Error)                                      | 0.00014                      |
+| ...                                                                               | ...                          |
