@@ -3,6 +3,7 @@ import time
 import copy
 import numpy as np
 import tensorflow as tf
+from tensorflow.core.framework import summary_pb2
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
 from src.utils import deco_print, deco_print_dict, feature_ranking, feature_ranking_pair, feature_ranking_trio
