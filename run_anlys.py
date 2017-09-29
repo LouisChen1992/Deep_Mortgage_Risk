@@ -9,8 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
-from src.utils import deco_print, deco_print_dict
-from src.utils_anlys import decide_boundary, construct_nonlinear_function
+from src.utils import deco_print, deco_print_dict, decide_boundary, construct_nonlinear_function
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
 
