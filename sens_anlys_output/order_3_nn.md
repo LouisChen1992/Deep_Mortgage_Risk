@@ -72,5 +72,5 @@
 | Original Interest Rate, Number of Times Current in Last 12 Months, Current Interest Rate - National Mortgage Rate       | 0.000052                     |
 | Current Outstanding Balance, Original Loan Balance, Zillow Zip Code Housing Price Change Since Origination              | 0.000052                     |
 | Original Interest Rate, Original Interest Rate - National Mortgate Rate, Lagged Prime Prepayment Rate in Same Zip Code  | 0.000050                     |
-| Original Interest Rate, Number of Times Current in Last 12 Months, Time Since Origination                               | 0.000050                     |
+| Original Interest Rate, Number of Times Current in Last 12 Months, Time Since Origination                               | 0.000050                     |
 | ...                                                                                                                     | ...                          |
