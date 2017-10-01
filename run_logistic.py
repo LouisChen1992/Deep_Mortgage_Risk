@@ -24,6 +24,9 @@ if FLAGS.mode == 'train':
 elif FLAGS.mode == 'test':
 	path = '/vol/Numpy_data_subprime_Test_new'
 	dl = DataInRamInputLayer(path=path, shuffle=False)
+elif FLAGS.mode == 'sens_anlys':
+	path = '/vol/Numpy_data_subprime_Test_new'
+	dl = DataInRamInputLayer(path=path, shuffle=False)
 else:
 	raise ValueError('Mode Not Implemented')
 deco_print('Data Layer Created')
@@ -39,6 +42,9 @@ if FLAGS.mode == 'train':
 elif FLAGS.mode == 'test':
 	config = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=1.0)
 	model = Model(config, is_training=False)
+elif FLAGS.mode == 'sens_anlys':
+	config = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=1.0)
+	model = Model(config, is_training=False, is_analysis=True)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
 deco_print('Model Created')
