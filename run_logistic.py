@@ -9,7 +9,7 @@ from src.data_layer import DataInRamInputLayer
 from src.utils import deco_print, deco_print_dict, num_poly_feature
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('mode', 'train', 'Mode:train/test')
+tf.flags.DEFINE_string('mode', 'train', 'Mode:train/test/sens_anlys')
 tf.flags.DEFINE_integer('order', 1, 'Polynomial feature order')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
@@ -139,3 +139,37 @@ with tf.Session() as sess:
 		deco_print('Test Loss: %f' %test_loss)
 		with open(os.path.join(FLAGS.logdir, 'loss.txt'), 'w') as f:
 			f.write('Test Loss: %f\n' %test_loss)
+
+	elif FLAGS.mode == 'sens_anlys':
+		deco_print('Executing Sensitivity Analysis Mode\n')
+
+		if not os.path.exists(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy')):
+			count = np.zeros(shape=(5,), dtype=int)
+			gradients = np.zeros(shape=(5, model._config.num_category, model._config.feature_dim), dtype=float)
+			epoch_start = time.time()
+			cur_epoch_step = 0
+			sample_step = 0
+			for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, poly_order=FLAGS.order, output_current_status=True)):
+				if sample_step != FLAGS.sample_size:
+					count += np.sum(x_cur, axis=0)
+					feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
+					gradients_i, = sess.run(fetches=[model._x_gradients], feed_dict=feed_dict)
+					for v in range(model._config.num_category):
+						gradients_i_v = gradients_i[v]
+						gradients[:,v,:] += x_cur.T.dot(np.absolute(gradients_i_v))
+					sample_step += 1
+				if info['epoch_step'] != cur_epoch_step:
+					epoch_last = time.time() - epoch_start
+					time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+					deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
+					cur_epoch_step = info['epoch_step']
+					sample_step = 0
+			gradients /= count[:, np.newaxis, np.newaxis]
+			deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'))
+			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient.npy'), gradients)
+
+		deco_print('Top 30:')
+		top_covariate = feature_ranking(FLAGS.logdir, dl._idx2covariate, float_feature_only=True)
+		for item in top_covariate:
+			print(item)
+		deco_print('Sensitivity Analysis Finished')
