@@ -34,8 +34,8 @@ The table below reports test loss for the best model (on validation set):
 
 | Features (#)  | Epoch | Train Loss | Validation Loss | Test Loss |
 |:-------------:|:-----:|:----------:|:---------------:|:---------:|
-| order 1 (291) | 1     | 0.1821     | 0.2111          |           |
-| order # (#)   |       |            |                 |           |
+| order 1 (291) | 1     | 0.1821     | 0.2111          | 0.1836    |
+| order 3 (#)   |       |            |                 |           |
 
 - Neural Network
 ```
