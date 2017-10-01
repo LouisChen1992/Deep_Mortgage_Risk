@@ -14,6 +14,7 @@ from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
+tf.flags.DEFINE_string('model', 'neural', 'neural/logistic')
 tf.flags.DEFINE_string('task', '', 'Task: 1d_nonlinear/2d_nonlinear/2d_contour/3d_contour/3d_contour_slice')
 tf.flags.DEFINE_string('plot_out', '', 'Path to save plots')
 FLAGS = tf.flags.FLAGS
@@ -28,7 +29,10 @@ deco_print('Data Layer Created')
 
 ### Create Model
 deco_print('Creating Model')
-config = Config(feature_dim=291, num_category=7, batch_size=1, dropout=1.0)
+if FLAGS.model == 'neural':
+	config = Config(feature_dim=291, num_category=7, batch_size=1, dropout=1.0)
+elif FLAGS.model == 'logistic':
+	config = Config(feature_dim=291, num_category=7, hidden_dim=[], batch_size=1, dropout=1.0)
 model = Model(config, is_training=False)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))

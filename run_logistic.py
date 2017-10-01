@@ -6,11 +6,11 @@ import tensorflow as tf
 from tensorflow.core.framework import summary_pb2
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
-from src.utils import deco_print, deco_print_dict, num_poly_feature
+from src.utils import deco_print, deco_print_dict, feature_ranking
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode:train/test/sens_anlys')
-tf.flags.DEFINE_integer('order', 1, 'Polynomial feature order')
+# tf.flags.DEFINE_integer('order', 1, 'Polynomial feature order')
 tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
@@ -78,7 +78,7 @@ with tf.Session() as sess:
 			epoch_start = time.time()
 			total_train_loss = 0.0
 			count = 0
-			for i, (x, y, info) in enumerate(dl.iterate_one_epoch(model._config.batch_size, poly_order=FLAGS.order)):
+			for i, (x, y, info) in enumerate(dl.iterate_one_epoch(model._config.batch_size)):
 				feed_dict = {model._x_placeholder:x, model._y_placeholder:y, model._epoch_step:info['epoch_step']}
 				loss_i, _ = sess.run(fetches=[model._loss, model._train_op], feed_dict=feed_dict)
 				total_train_loss += loss_i
@@ -113,7 +113,7 @@ with tf.Session() as sess:
 			deco_print('Running Validation')
 			total_valid_loss = 0.0
 			count_valid = 0
-			for i, (x, y, _) in enumerate(dl_valid.iterate_one_epoch(model_valid._config.batch_size, poly_order=FLAGS.order)):
+			for i, (x, y, _) in enumerate(dl_valid.iterate_one_epoch(model_valid._config.batch_size)):
 				feed_dict = {model_valid._x_placeholder:x, model_valid._y_placeholder:y}
 				loss_i, = sess.run(fetches=[model_valid._loss], feed_dict=feed_dict)
 				total_valid_loss += loss_i
@@ -133,7 +133,7 @@ with tf.Session() as sess:
 		cur_epoch_step = 0
 		total_test_loss = 0.0
 		count = 0
-		for i, (x, y, info) in enumerate(dl.iterate_one_epoch(model._config.batch_size, poly_order=FLAGS.order)):
+		for i, (x, y, info) in enumerate(dl.iterate_one_epoch(model._config.batch_size)):
 			feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
 			loss_i, = sess.run(fetches=[model._loss], feed_dict=feed_dict)
 			total_test_loss += loss_i
@@ -159,7 +159,7 @@ with tf.Session() as sess:
 			epoch_start = time.time()
 			cur_epoch_step = 0
 			sample_step = 0
-			for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, poly_order=FLAGS.order, output_current_status=True)):
+			for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
 				if sample_step != FLAGS.sample_size:
 					count += np.sum(x_cur, axis=0)
 					feed_dict = {model._x_placeholder:x, model._y_placeholder:y}

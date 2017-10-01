@@ -80,7 +80,7 @@ class DataInRamInputLayer():
 				X_float_input = X_float[idx_input]
 				X_input = np.concatenate((X_int_input, X_float_input), axis=1)
 				### construct polynomial feature
-				X_input = self._construct_polynomial_feature(X_input, poly_order=poly_order)
+				# X_input = self._construct_polynomial_feature(X_input, poly_order=poly_order)
 				###
 				Y_input = outcome[idx_input]
 
