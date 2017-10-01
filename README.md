@@ -12,8 +12,8 @@ For MacOSX, first install VTK with Homebrew, then install Mayavi with pip.
 ```
 $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install
 $ brew install vtk
-$ mkdir -p /Users/luyangchen/Library/Python/2.7/lib/python/site-packages
-$ echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/luyangchen/Library/Python/2.7/lib/python/site-packages/homebrew.pth
+$ mkdir -p /Users/[user]/Library/Python/2.7/lib/python/site-packages
+$ echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/[user]/Library/Python/2.7/lib/python/site-packages/homebrew.pth
 $ brew install wxpython
 $ sudo pip install mayavi
 ```
