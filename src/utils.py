@@ -3,6 +3,7 @@ import copy
 import math
 import six
 import numpy as np
+from scipy.special import comb
 
 def deco_print(line, end='\n'):
 	six.print_('>==================> ' + line, end=end)
@@ -10,6 +11,12 @@ def deco_print(line, end='\n'):
 def deco_print_dict(dic):
 	for key, value in dic.items():
 		deco_print('{} : {}'.format(key, value))
+
+def num_poly_feature(n, order=1, include_bias=False):
+	num = int(include_bias)
+	for o in range(1, order+1):
+		num += comb(n+o-1, o, exact=True)
+	return num
 
 def decide_boundary(mean, std, x_left, x_right, factor=1.0):
 	if x_left == '':

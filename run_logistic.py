@@ -6,10 +6,10 @@ import tensorflow as tf
 from tensorflow.core.framework import summary_pb2
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
-from src.utils import deco_print, deco_print_dict
+from src.utils import deco_print, deco_print_dict, num_poly_feature
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('mode', 'train', 'Mode:train')
+tf.flags.DEFINE_string('mode', 'train', 'Mode:train/test')
 tf.flags.DEFINE_integer('order', 1, 'Polynomial feature order')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
@@ -21,6 +21,9 @@ if FLAGS.mode == 'train':
 	dl = DataInRamInputLayer(path=path, shuffle=True)
 	path_valid = '/vol/Numpy_data_subprime_Val_new'
 	dl_valid = DataInRamInputLayer(path=path_valid, shuffle=False)
+elif FLAGS.mode == 'test':
+	path = '/vol/Numpy_data_subprime_Test_new'
+	dl = DataInRamInputLayer(path=path, shuffle=False)
 else:
 	raise ValueError('Mode Not Implemented')
 deco_print('Data Layer Created')
@@ -33,6 +36,9 @@ if FLAGS.mode == 'train':
 	model = Model(config)
 	config_valid = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=1.0)
 	model_valid = Model(config_valid, force_var_reuse=True, is_training=False)
+elif FLAGS.mode == 'test':
+	config = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=1.0)
+	model = Model(config, is_training=False)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
 deco_print('Model Created')
@@ -110,3 +116,26 @@ with tf.Session() as sess:
 			sw.flush()
 			deco_print('Saving Epoch Checkpoint\n')
 			saver.save(sess, save_path=os.path.join(FLAGS.logdir, 'model-epoch'), global_step=epoch)
+
+	elif FLAGS.mode == 'test':
+		deco_print('Executing Test Mode\n')
+		epoch_start = time.time()
+		cur_epoch_step = 0
+		total_test_loss = 0.0
+		count = 0
+		for i, (x, y, info) in enumerate(dl.iterate_one_epoch(model._config.batch_size, poly_order=FLAGS.order)):
+			feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
+			loss_i, = sess.run(fetches=[model._loss], feed_dict=feed_dict)
+			total_test_loss += loss_i
+			count += 1
+
+			if info['epoch_step'] != cur_epoch_step:
+				epoch_last = time.time() - epoch_start
+				time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
+				deco_print('Test Loss: %f, Elapse / Estimate: %.2fs / %.2fs     ' %(total_test_loss / count, epoch_last, time_est), end='\r')
+				cur_epoch_step = info['epoch_step']
+
+		test_loss = total_test_loss / count
+		deco_print('Test Loss: %f' %test_loss)
+		with open(os.path.join(FLAGS.logdir, 'loss.txt'), 'w') as f:
+			f.write('Test Loss: %f\n' %test_loss)
