@@ -11,6 +11,7 @@ from src.utils import deco_print, deco_print_dict, num_poly_feature
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode:train/test/sens_anlys')
 tf.flags.DEFINE_integer('order', 1, 'Polynomial feature order')
+tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 FLAGS = tf.flags.FLAGS
 
@@ -26,7 +27,10 @@ elif FLAGS.mode == 'test':
 	dl = DataInRamInputLayer(path=path, shuffle=False)
 elif FLAGS.mode == 'sens_anlys':
 	path = '/vol/Numpy_data_subprime_Test_new'
-	dl = DataInRamInputLayer(path=path, shuffle=False)
+	if FLAGS.sample_size == -100:
+		dl = DataInRamInputLayer(path=path, shuffle=False)
+	else:
+		dl = DataInRamInputLayer(path=path, shuffle=True)
 else:
 	raise ValueError('Mode Not Implemented')
 deco_print('Data Layer Created')
