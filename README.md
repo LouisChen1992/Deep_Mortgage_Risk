@@ -49,6 +49,11 @@ The table below reports test loss for the best model (on validation set):
 | 9     | 0.1642     | 0.1930          | 0.1666    |
 
 ### Sensitivity Analysis
+- Logistic Regression
+```
+$ python3 run_logistic.py --mode=sens_anlys --logdir=model/logistic_order_1 --order=1
+```
+- Neural Network
 ```
 $ python3 run.py --mode=sens_anlys --logdir=model/neural_network
 $ python3 run.py --mode=sens_anlys_pair --logdir=model/neural_network --sample_size=1
