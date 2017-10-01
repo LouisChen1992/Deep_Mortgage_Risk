@@ -51,26 +51,26 @@
 | Current Outstanding Balance, Original Loan Balance, Original Interest Rate                                              | 0.000127                     |
 | Original Interest Rate, Original Interest Rate - National Mortgate Rate, Number of Times Current in Last 12 Months      | 0.000120                     |
 | Current Outstanding Balance, Original Interest Rate, Number of Times Current in Last 12 Months                          | 0.000100                     |
-| FICO Score, Current Outstanding Balance, Number of Times Current in Last 12 Months                                      | 0.000095                     |
-| Original Loan Balance, Original Interest Rate, Number of Times Current in Last 12 Months                                | 0.000094                     |
-| FICO Score, Original Loan Balance, Number of Times Current in Last 12 Months                                            | 0.000087                     |
-| Current Outstanding Balance, Original Loan Balance, Number of Times Current in Last 12 Months                           | 0.000078                     |
-| FICO Score, Original Interest Rate - National Mortgate Rate, Number of Times Current in Last 12 Months                  | 0.000076                     |
-| FICO Score, Original Interest Rate, Zillow Zip Code Housing Price Change Since Origination                              | 0.000075                     |
-| Current Outstanding Balance, Original Interest Rate, Original Interest Rate - National Mortgate Rate                    | 0.000074                     |
-| Original Interest Rate, Original Interest Rate - National Mortgate Rate, Current Interest Rate - National Mortgage Rate | 0.000074                     |
-| Original Loan Balance, Original Interest Rate, Original Interest Rate - National Mortgate Rate                          | 0.000073                     |
-| FICO Score, Original Interest Rate, Lagged Prime Prepayment Rate in Same Zip Code                                       | 0.000071                     |
-| FICO Score, Original Interest Rate, Current Interest Rate - National Mortgage Rate                                      | 0.000070                     |
-| FICO Score, Original Interest Rate, Time Since Origination                                                              | 0.000068                     |
-| Number of Times 30 Days Delinquent in Last 12 Months, FICO Score, Original Interest Rate                                | 0.000066                     |
-| FICO Score, Original Loan Balance, Original Interest Rate - National Mortgate Rate                                      | 0.000057                     |
-| FICO Score, Current Outstanding Balance, Original Interest Rate - National Mortgate Rate                                | 0.000056                     |
-| Current Outstanding Balance, Original Interest Rate, Zillow Zip Code Housing Price Change Since Origination             | 0.000055                     |
-| Current Outstanding Balance, Original Loan Balance, Original Interest Rate - National Mortgate Rate                     | 0.000053                     |
-| Original Interest Rate, Number of Times Current in Last 12 Months, Lagged Prime Prepayment Rate in Same Zip Code        | 0.000053                     |
-| Original Interest Rate, Number of Times Current in Last 12 Months, Current Interest Rate - National Mortgage Rate       | 0.000052                     |
-| Current Outstanding Balance, Original Loan Balance, Zillow Zip Code Housing Price Change Since Origination              | 0.000052                     |
-| Original Interest Rate, Original Interest Rate - National Mortgate Rate, Lagged Prime Prepayment Rate in Same Zip Code  | 0.000050                     |
+| FICO Score, Current Outstanding Balance, Number of Times Current in Last 12 Months                                      | 0.000095                     |
+| Original Loan Balance, Original Interest Rate, Number of Times Current in Last 12 Months                                | 0.000094                     |
+| FICO Score, Original Loan Balance, Number of Times Current in Last 12 Months                                            | 0.000087                     |
+| Current Outstanding Balance, Original Loan Balance, Number of Times Current in Last 12 Months                           | 0.000078                     |
+| FICO Score, Original Interest Rate - National Mortgate Rate, Number of Times Current in Last 12 Months                  | 0.000076                     |
+| FICO Score, Original Interest Rate, Zillow Zip Code Housing Price Change Since Origination                              | 0.000075                     |
+| Current Outstanding Balance, Original Interest Rate, Original Interest Rate - National Mortgate Rate                    | 0.000074                     |
+| Original Interest Rate, Original Interest Rate - National Mortgate Rate, Current Interest Rate - National Mortgage Rate | 0.000074                     |
+| Original Loan Balance, Original Interest Rate, Original Interest Rate - National Mortgate Rate                          | 0.000073                     |
+| FICO Score, Original Interest Rate, Lagged Prime Prepayment Rate in Same Zip Code                                       | 0.000071                     |
+| FICO Score, Original Interest Rate, Current Interest Rate - National Mortgage Rate                                      | 0.000070                     |
+| FICO Score, Original Interest Rate, Time Since Origination                                                              | 0.000068                     |
+| Number of Times 30 Days Delinquent in Last 12 Months, FICO Score, Original Interest Rate                                | 0.000066                     |
+| FICO Score, Original Loan Balance, Original Interest Rate - National Mortgate Rate                                      | 0.000057                     |
+| FICO Score, Current Outstanding Balance, Original Interest Rate - National Mortgate Rate                                | 0.000056                     |
+| Current Outstanding Balance, Original Interest Rate, Zillow Zip Code Housing Price Change Since Origination             | 0.000055                     |
+| Current Outstanding Balance, Original Loan Balance, Original Interest Rate - National Mortgate Rate                     | 0.000053                     |
+| Original Interest Rate, Number of Times Current in Last 12 Months, Lagged Prime Prepayment Rate in Same Zip Code        | 0.000053                     |
+| Original Interest Rate, Number of Times Current in Last 12 Months, Current Interest Rate - National Mortgage Rate       | 0.000052                     |
+| Current Outstanding Balance, Original Loan Balance, Zillow Zip Code Housing Price Change Since Origination              | 0.000052                     |
+| Original Interest Rate, Original Interest Rate - National Mortgate Rate, Lagged Prime Prepayment Rate in Same Zip Code  | 0.000050                     |
 | Original Interest Rate, Number of Times Current in Last 12 Months, Time Since Origination                               | 0.000050                     |
 | ...                                                                                                                     | ...                          |
