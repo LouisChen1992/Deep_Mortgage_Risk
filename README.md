@@ -28,7 +28,15 @@ For more 3D visualization, please refer to [LINK](http://www.sethanil.com/python
 - Logistic Regression
 ```
 $ python3 run_logistic.py --mode=train --logdir=model/logistic_order_1 --order=1 --num_epochs=10
+$ python3 run_logistic.py --mode=test --logdir=model/logistic_order_1 --order=1
 ```
+The table below reports test loss for the best model (on validation set): 
+
+| Features (#)  | Epoch | Train Loss | Validation Loss | Test Loss |
+|:-------------:|:-----:|:----------:|:---------------:|:---------:|
+| order 1 (291) | 1     | 0.1821     | 0.2111          |           |
+| order # (#)   |       |            |                 |           |
+
 - Neural Network
 ```
 $ python3 run.py --mode=train --logdir=model/neural_network --num_epochs=10
