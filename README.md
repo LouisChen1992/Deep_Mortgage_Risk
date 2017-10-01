@@ -27,20 +27,19 @@ For more 3D visualization, please refer to [LINK](http://www.sethanil.com/python
 ### Train, Validation & Test
 - Logistic Regression
 ```
-$ python3 run_logistic.py --mode=train --logdir=model/logistic_order_1 --order=1 --num_epochs=10
-$ python3 run_logistic.py --mode=test --logdir=model/logistic_order_1 --order=1
+$ python3 run_logistic.py --mode=train --logdir=model/logistic --num_epochs=2
+$ python3 run_logistic.py --mode=test --logdir=model/logistic
 ```
 The table below reports test loss for the best model (on validation set): 
 
-| Features (#)  | Epoch | Train Loss | Validation Loss | Test Loss |
-|:-------------:|:-----:|:----------:|:---------------:|:---------:|
-| order 1 (291) | 1     | 0.1821     | 0.2111          | 0.1836    |
-| order 3 (#)   |       |            |                 |           |
+| Epoch | Train Loss | Validation Loss | Test Loss |
+|:-----:|:----------:|:---------------:|:---------:|
+| 1     | 0.1821     | 0.2111          | 0.1836    |
 
 - Neural Network
 ```
-$ python3 run.py --mode=train --logdir=model/neural_network --num_epochs=10
-$ python3 run.py --mode=test --logdir=model/neural_network
+$ python3 run.py --mode=train --logdir=model/neural --num_epochs=10
+$ python3 run.py --mode=test --logdir=model/neural
 ```
 The table below reports test loss for the best model (on validation set):
 
@@ -51,21 +50,21 @@ The table below reports test loss for the best model (on validation set):
 ### Sensitivity Analysis
 - Logistic Regression
 ```
-$ python3 run_logistic.py --mode=sens_anlys --logdir=model/logistic_order_1 --order=1
+$ python3 run_logistic.py --mode=sens_anlys --logdir=model/logistic
 ```
 - Neural Network
 ```
-$ python3 run.py --mode=sens_anlys --logdir=model/neural_network
-$ python3 run.py --mode=sens_anlys_pair --logdir=model/neural_network --sample_size=1
-$ python3 run.py --mode=sens_anlys_trio --logdir=model/neural_network --sample_size=1
+$ python3 run.py --mode=sens_anlys --logdir=model/neural
+$ python3 run.py --mode=sens_anlys_pair --logdir=model/neural --sample_size=1
+$ python3 run.py --mode=sens_anlys_trio --logdir=model/neural --sample_size=1
 ```
 Analysis results can be found in the folder "sens_anlys_output". 
 
 ### Analysis
 ```
-$ python3 run_anlys.py --logdir=model/neural_network --task=1d_nonlinear --plot_out=plot # 1d Nonlinear 3D Plot
-$ python3 run_anlys.py --logdir=model/neural_network --task=2d_nonlinear --plot_out=plot # 2d Nonlinear 3D Plot
-$ python3 run_anlys.py --logdir=model/neural_network --task=2d_contour --plot_out=plot # 2d Nonlinear Contour Plot
-$ python run_anlys.py --logdir=model/neural_network --task=3d_contour --plot_out=plot # 3d Nonlinear Contour Plot
-$ python3 run_anlys.py --logdir=model/neural_network --task=3d_contour_slice --plot_out=plot # 3d Nonlinear Contour Slices
+$ python3 run_anlys.py --logdir=model/neural --task=1d_nonlinear --plot_out=plot # 1d Nonlinear 3D Plot
+$ python3 run_anlys.py --logdir=model/neural --task=2d_nonlinear --plot_out=plot # 2d Nonlinear 3D Plot
+$ python3 run_anlys.py --logdir=model/neural --task=2d_contour --plot_out=plot # 2d Nonlinear Contour Plot
+$ python run_anlys.py --logdir=model/neural --task=3d_contour --plot_out=plot # 3d Nonlinear Contour Plot
+$ python3 run_anlys.py --logdir=model/neural --task=3d_contour_slice --plot_out=plot # 3d Nonlinear Contour Slices
 ```
