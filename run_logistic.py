@@ -6,13 +6,13 @@ import tensorflow as tf
 from tensorflow.core.framework import summary_pb2
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
-from src.utils import deco_print, deco_print_dict, feature_ranking, feature_ranking_pair, feature_ranking_trio
+from src.utils import deco_print, deco_print_dict, feature_ranking
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
-tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys/sens_anlys_pair/sens_anlys_trio')
+tf.flags.DEFINE_string('mode', 'train', 'Mode:train/test/sens_anlys')
+# tf.flags.DEFINE_integer('order', 1, 'Polynomial feature order')
 tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
-tf.flags.DEFINE_float('delta', 1.1, 'Delta')
 FLAGS = tf.flags.FLAGS
 
 ### Create Data Layer
@@ -25,7 +25,7 @@ if FLAGS.mode == 'train':
 elif FLAGS.mode == 'test':
 	path = '/vol/Numpy_data_subprime_Test_new'
 	dl = DataInRamInputLayer(path=path, shuffle=False)
-elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair' or FLAGS.mode == 'sens_anlys_trio':
+elif FLAGS.mode == 'sens_anlys':
 	path = '/vol/Numpy_data_subprime_Test_new'
 	if FLAGS.sample_size == -100:
 		dl = DataInRamInputLayer(path=path, shuffle=False)
@@ -39,15 +39,15 @@ deco_print('Data Layer Created')
 ### Create Model
 deco_print('Creating Model')
 if FLAGS.mode == 'train':
-	config = Config(feature_dim=291, num_category=7, dropout=0.9)
+	config = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=0.9)
 	model = Model(config)
-	config_valid = Config(feature_dim=291, num_category=7, dropout=1.0)
+	config_valid = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=1.0)
 	model_valid = Model(config_valid, force_var_reuse=True, is_training=False)
 elif FLAGS.mode == 'test':
-	config = Config(feature_dim=291, num_category=7, dropout=1.0)
+	config = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=1.0)
 	model = Model(config, is_training=False)
-elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair' or FLAGS.mode == 'sens_anlys_trio':
-	config = Config(feature_dim=291, num_category=7, dropout=1.0)
+elif FLAGS.mode == 'sens_anlys':
+	config = Config(feature_dim=291, num_category=7, hidden_dim=[], dropout=1.0)
 	model = Model(config, is_training=False, is_analysis=True)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
@@ -73,7 +73,7 @@ with tf.Session() as sess:
 		cur_epoch_step = 0
 		total_epoch_step_loss = 0.0
 		count_epoch_step = 0
-		
+
 		for epoch in range(FLAGS.num_epochs):
 			epoch_start = time.time()
 			total_train_loss = 0.0
@@ -183,117 +183,3 @@ with tf.Session() as sess:
 		for item in top_covariate:
 			print(item)
 		deco_print('Sensitivity Analysis Finished')
-
-	elif FLAGS.mode == 'sens_anlys_pair':
-		deco_print('Executing Sensitivity Analysis (Pairs) Mode')
-		deco_print('Consider Real-Valued Pairs Only\n')
-
-		### real-valued pairs
-		num_feature_pairs = dl._covariate_count_float * (dl._covariate_count_float - 1) // 2
-		idx2pair = [(i+dl._covariate_count_int,j+dl._covariate_count_int) for i in range(dl._covariate_count_float-1) for j in range(i+1,dl._covariate_count_float)]
-		pair2idx = {idx2pair[l]:l for l in range(num_feature_pairs)}
-		###
-
-		if not os.path.exists(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.npy')):
-			count = np.zeros(shape=(5,), dtype=int)
-			gradients = np.zeros(shape=(5, model._config.num_category, num_feature_pairs))
-			epoch_start = time.time()
-			cur_epoch_step = 0
-			sample_step = 0
-			for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
-				if sample_step != FLAGS.sample_size:
-					count += np.sum(x_cur, axis=0)
-					f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
-					for i, j in idx2pair:
-						x_copy_1 = copy.deepcopy(x)
-						x_copy_2 = copy.deepcopy(x)
-						### 1 delta
-						x_copy_1[:,i] *= FLAGS.delta
-						f_i, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
-						x_copy_2[:,j] *= FLAGS.delta
-						f_j, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_2})
-						### 2 delta
-						x_copy_1[:,j] *= FLAGS.delta
-						f_ij, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
-
-						finite_diff = np.absolute(f_ij - f_i - f_j + f)
-						gradients[:,:,pair2idx[(i,j)]] += x_cur.T.dot(finite_diff)
-					sample_step += 1
-				if info['epoch_step'] != cur_epoch_step:
-					epoch_last = time.time() - epoch_start
-					time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
-					deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
-					cur_epoch_step = info['epoch_step']
-					sample_step = 0
-			gradients /= count[:, np.newaxis, np.newaxis]
-			deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.npy'))
-			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_2.npy'), gradients)
-
-		deco_print('Top 30: ')
-		top_covariate = feature_ranking_pair(FLAGS.logdir, dl._idx2covariate, idx2pair)
-		for item in top_covariate:
-			print(item)
-		deco_print('Sensitivity Analysis (Pairs) Finished')
-
-	elif FLAGS.mode == 'sens_anlys_trio':
-		deco_print('Executing Sensitivity Analysis (Trios) Mode')
-		deco_print('Consider Real-Valued Trios With Important Variables Only\n')
-
-		### real-valued trios
-		num_import_features = 20
-		important_features = feature_ranking(FLAGS.logdir, dl._idx2covariate, num=num_import_features, float_feature_only=True)
-		num_feature_trios = num_import_features * (num_import_features - 1) * (num_import_features - 2) // 6
-		idx2trio = [(important_features[i][0],important_features[j][0],important_features[k][0]) for i in range(num_import_features - 2) for j in range(i+1,num_import_features-1) for k in range(j+1,num_import_features)]
-		trio2idx = {idx2trio[l]:l for l in range(num_feature_trios)}
-		###
-
-		if not os.path.exists(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy')):
-			count = np.zeros(shape=(5,), dtype=int)
-			gradients = np.zeros(shape=(5, model._config.num_category, num_feature_trios))
-			epoch_start = time.time()
-			cur_epoch_step = 0
-			sample_step = 0
-			for _, (x, y, info, x_cur) in enumerate(dl.iterate_one_epoch(model._config.batch_size, output_current_status=True)):
-				if sample_step != FLAGS.sample_size:
-					count += np.sum(x_cur, axis=0)
-					f, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x})
-					for i, j, k in idx2trio:
-						x_copy_1 = copy.deepcopy(x)
-						x_copy_2 = copy.deepcopy(x)
-						x_copy_3 = copy.deepcopy(x)
-						### 1 delta
-						x_copy_1[:,i] *= FLAGS.delta
-						f_i, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
-						x_copy_2[:,j] *= FLAGS.delta
-						f_j, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_2})
-						x_copy_3[:,k] *= FLAGS.delta
-						f_k, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_3})
-						### 2 delta
-						x_copy_1[:,j] *= FLAGS.delta
-						f_ij, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
-						x_copy_2[:,k] *= FLAGS.delta
-						f_jk, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_2})
-						x_copy_3[:,i] *= FLAGS.delta
-						f_ki, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_3})
-						### 3 delta
-						x_copy_1[:,k] *= FLAGS.delta
-						f_ijk, = sess.run(fetches=[model._prob], feed_dict={model._x_placeholder:x_copy_1})
-
-						finite_diff = np.absolute(f_ijk - f_ij - f_jk - f_ki + f_i + f_j + f_k - f)
-						gradients[:,:,trio2idx[(i,j,k)]] += x_cur.T.dot(finite_diff)
-					sample_step += 1
-				if info['epoch_step'] != cur_epoch_step:
-					epoch_last = time.time() - epoch_start
-					time_est = epoch_last / (info['idx_file'] + 1) * info['num_file']
-					deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
-					cur_epoch_step = info['epoch_step']
-					sample_step = 0
-			gradients /= count[:, np.newaxis, np.newaxis]
-			deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy'))
-			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_3.npy'), gradients)
-
-		deco_print('Top 30: ')
-		top_covariate = feature_ranking_trio(FLAGS.logdir, dl._idx2covariate, idx2trio)
-		for item in top_covariate:
-			print(item)
-		deco_print('Sensitivity Analysis (Trios) Finished')

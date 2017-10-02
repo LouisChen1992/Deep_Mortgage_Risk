@@ -1,8 +1,8 @@
 import time, os
-from .utils import *
 import tensorflow as tf
 from tensorflow.python.layers.core import Dense
 from tensorflow.core.framework import summary_pb2
+from .utils import deco_print
 
 class Config:
 	def __init__(self,

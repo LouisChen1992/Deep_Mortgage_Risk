@@ -1,6 +1,7 @@
 import os
 import json
 import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
 
 class DataInRamInputLayer():
 	def __init__(self, path, shuffle=False, load_file_list=True):
@@ -52,7 +53,12 @@ class DataInRamInputLayer():
 		self._num_file = len(self._X_int_list)
 		self._outseq = np.arange(self._num_file)
 
-	def iterate_one_epoch(self, batch_size, output_current_status=False):
+	def _construct_polynomial_feature(self, feature_in, poly_order=1, include_bias=False):
+		poly = PolynomialFeatures(degree=poly_order, include_bias=include_bias)
+		feature_out = poly.fit_transform(feature_in)
+		return feature_out
+
+	def iterate_one_epoch(self, batch_size, output_current_status=False, poly_order=1):
 		if self._shuffle:
 			np.random.shuffle(self._outseq)
 
@@ -73,6 +79,9 @@ class DataInRamInputLayer():
 				X_int_input = X_int[idx_input]
 				X_float_input = X_float[idx_input]
 				X_input = np.concatenate((X_int_input, X_float_input), axis=1)
+				### construct polynomial feature
+				# X_input = self._construct_polynomial_feature(X_input, poly_order=poly_order)
+				###
 				Y_input = outcome[idx_input]
 
 				if idx_batch == num_batch - 1:
@@ -90,6 +99,8 @@ class DataInRamInputLayer():
 	def calculate_feature_statistics(self):
 		moments = np.zeros((2, self._covariate_count))
 		count = 0
+		self._max = np.array([-float('inf')] * self._covariate_count)
+		self._min = np.array([float('inf')] * self._covariate_count)
 		for idx_file in range(self._num_file):
 			X_int = np.load(os.path.join(self._path, self._X_int_list[idx_file]))
 			X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
@@ -99,5 +110,7 @@ class DataInRamInputLayer():
 			X = np.concatenate([X_int, X_float], axis=1)
 			moments[0] += np.sum(X, axis=0)
 			moments[1] += np.sum(X**2, axis=0)
+			self._max = np.maximum(np.max(X, 0), self._max)
+			self._min = np.minimum(np.min(X, 0), self._min)
 		self._mean = moments[0] / count
 		self._std = np.sqrt(moments[1] / count - self._mean ** 2)
