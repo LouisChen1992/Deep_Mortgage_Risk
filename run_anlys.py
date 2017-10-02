@@ -52,6 +52,8 @@ else:
 data = np.load(os.path.join(FLAGS.logdir, 'X_stat_Test.npz'))
 mean = data['mean']
 std = data['std']
+lower_bound = data['min']
+upper_bound = data['max']
 ###
 
 if FLAGS.task == '1d_nonlinear':
@@ -61,7 +63,7 @@ if FLAGS.task == '1d_nonlinear':
 	factor = float(input('Enter Amplification Factor: '))
 	x_idx_left = input('Enter Variate Lower Bound (default: mean - 3 * std): ')
 	x_idx_right = input('Enter Variate Upper Bound (default: mean + 3 * std): ')
-	x_idx_left, x_idx_right = decide_boundary(mean[idx], std[idx], x_idx_left, x_idx_right, factor)
+	x_idx_left, x_idx_right = decide_boundary(mean[idx], std[idx], x_idx_left, x_idx_right, lower_bound[idx], upper_bound[idx], factor)
 	### construct nonlinear function
 	if idx_input != '':
 		for i in range(5):
@@ -80,6 +82,7 @@ if FLAGS.task == '1d_nonlinear':
 	plt.xlabel(dl._idx2covariate[idx])
 	plt.ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
 	plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d_%s.pdf' %(idx, idx_output, FLAGS.model)))
+	np.savez(os.path.join(FLAGS.plot_out, 'x_%d_inIdx_%s_outIdx_%d_%s.npz' %(idx, idx_input, idx_output, FLAGS.model)), x=x, y=y)
 elif FLAGS.task == '2d_nonlinear' or FLAGS.task == '2d_contour':
 	idx_x = int(input('Enter Variate Idx For x (237 - 290): '))
 	idx_y = int(input('Enter Variate Idx For y (237 - 290): '))
@@ -91,8 +94,8 @@ elif FLAGS.task == '2d_nonlinear' or FLAGS.task == '2d_contour':
 	x_idx_right = input('Enter Variate Upper Bound For x (default: mean + 3 * std): ')
 	y_idx_left = input('Enter Variate Lower Bound For y (default: mean - 3 * std): ')
 	y_idx_right = input('Enter Variate Upper Bound For y (default: mean + 3 * std): ')
-	x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, factor_x)
-	y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, factor_y)
+	x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, lower_bound[idx_x], upper_bound[idx_x], factor_x)
+	y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, lower_bound[idx_y], upper_bound[idx_y], factor_y)
 	### construct nonlinear function
 	if idx_input != '':
 		for i in range(5):
@@ -126,7 +129,9 @@ elif FLAGS.task == '2d_nonlinear' or FLAGS.task == '2d_contour':
 		plt.ylabel(dl._idx2covariate[idx_y])
 		cbar = plt.colorbar(im)
 		cbar.ax.set_ylabel('Probability of Transition to %s' %dl._idx2outcome[idx_output])
-	plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d_z_%d_%s.pdf' %(idx_x, idx_y, idx_output, FLAGS.model)))
+	plt.show()
+	# plt.savefig(os.path.join(FLAGS.plot_out, 'x_%d_y_%d_z_%d_%s.pdf' %(idx_x, idx_y, idx_output, FLAGS.model)))
+	np.savez(os.path.join(FLAGS.plot_out, 'x_%d_y_%d_inIdx_%s_outIdx_%d_%s.npz' %(idx_x, idx_y, idx_input, idx_output, FLAGS.model)), x=x, y=y, z=z)
 elif FLAGS.task == '3d_contour':
 	idx_x = int(input('Enter Variate Idx For x (237 - 290): '))
 	idx_y = int(input('Enter Variate Idx For y (237 - 290): '))
@@ -142,9 +147,9 @@ elif FLAGS.task == '3d_contour':
 	y_idx_right = input('Enter Variate Upper Bound For y (default: mean + 3 * std): ')
 	z_idx_left = input('Enter Variate Lower Bound For z (default: mean - 3 * std): ')
 	z_idx_right = input('Enter Variate Upper Bound For z (default: mean + 3 * std): ')
-	x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, factor_x)
-	y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, factor_y)
-	z_idx_left, z_idx_right = decide_boundary(mean[idx_z], std[idx_z], z_idx_left, z_idx_right, factor_z)
+	x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, lower_bound[idx_x], upper_bound[idx_x], factor_x)
+	y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, lower_bound[idx_y], upper_bound[idx_y], factor_y)
+	z_idx_left, z_idx_right = decide_boundary(mean[idx_z], std[idx_z], z_idx_left, z_idx_right, lower_bound[idx_z], upper_bound[idx_z], factor_z)
 	### construct nonlinear function
 	if idx_input != '':
 		for i in range(5):
@@ -184,9 +189,9 @@ elif FLAGS.task == '3d_contour_slice':
 	y_idx_right = input('Enter Variate Upper Bound For y (default: mean + 3 * std): ')
 	z_idx_left = input('Enter Variate Lower Bound For z (default: mean - 3 * std): ')
 	z_idx_right = input('Enter Variate Upper Bound For z (default: mean + 3 * std): ')
-	x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, factor_x)
-	y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, factor_y)
-	z_idx_left, z_idx_right = decide_boundary(mean[idx_z], std[idx_z], z_idx_left, z_idx_right, factor_z)
+	x_idx_left, x_idx_right = decide_boundary(mean[idx_x], std[idx_x], x_idx_left, x_idx_right, lower_bound[idx_x], upper_bound[idx_x], factor_x)
+	y_idx_left, y_idx_right = decide_boundary(mean[idx_y], std[idx_y], y_idx_left, y_idx_right, lower_bound[idx_y], upper_bound[idx_y], factor_y)
+	z_idx_left, z_idx_right = decide_boundary(mean[idx_z], std[idx_z], z_idx_left, z_idx_right, lower_bound[idx_z], upper_bound[idx_z], factor_z)
 	x = np.linspace(x_idx_left, x_idx_right, 51)
 	y = np.linspace(y_idx_left, y_idx_right, 51)
 	zs = np.linspace(z_idx_left, z_idx_right, 4)

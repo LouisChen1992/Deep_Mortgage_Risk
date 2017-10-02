@@ -4,6 +4,7 @@ import math
 import six
 import numpy as np
 from scipy.special import comb
+import matplotlib.pyplot as plt
 
 def deco_print(line, end='\n'):
 	six.print_('>==================> ' + line, end=end)
@@ -18,13 +19,13 @@ def num_poly_feature(n, order=1, include_bias=False):
 		num += comb(n+o-1, o, exact=True)
 	return num
 
-def decide_boundary(mean, std, x_left, x_right, factor=1.0):
+def decide_boundary(mean, std, x_left, x_right, lower_bound, upper_bound, factor=1.0):
 	if x_left == '':
-		x_left = math.floor((mean - 3 * std) * factor / 10) * 10
+		x_left = math.floor(max(mean - 3 * std, lower_bound) * factor / 10) * 10
 	else:
 		x_left = float(x_left)
 	if x_right == '':
-		x_right = math.floor((mean + 3 * std) * factor / 10) * 10
+		x_right = math.ceil(min(mean + 3 * std, upper_bound) * factor / 10) * 10
 	else:
 		x_right = float(x_right)
 	return x_left, x_right
@@ -75,3 +76,15 @@ def feature_ranking_trio(logdir, idx2covariate, idx2trio, num=30, status_in=0, s
 	gradient_sorted = [(idx2trio[idx], grad) for idx, grad in gradient_sorted]
 	gradient_sorted = [(trio, (idx2covariate[trio[0]],idx2covariate[trio[1]],idx2covariate[trio[2]]), grad) for trio, grad in gradient_sorted]
 	return gradient_sorted[:num]
+
+def combine_two_plots(logdir, dl, idx, inIdx, outIdx):
+	x = np.load(os.path.join(logdir, 'x_%d_inIdx_%s_outIdx_%d_%s.npz' %(idx, inIdx, outIdx, 'neural')))['x']
+	y_neural = np.load(os.path.join(logdir, 'x_%d_inIdx_%s_outIdx_%d_%s.npz' %(idx, inIdx, outIdx, 'neural')))['y']
+	y_logistic = np.load(os.path.join(logdir, 'x_%d_inIdx_%s_outIdx_%d_%s.npz' %(idx, inIdx, outIdx, 'logistic')))['y']
+	plt.figure()
+	plt.scatter(x, y_neural, color='b', label='neural network')
+	plt.scatter(x, y_logistic, color='r', label='logistic regression')
+	plt.xlabel(dl._idx2covariate[idx])
+	plt.ylabel('Probability of Transition to %s' %dl._idx2outcome[outIdx])
+	plt.legend()
+	plt.savefig(os.path.join(logdir, 'x_%d_y_%d.pdf' %(idx, outIdx)))
