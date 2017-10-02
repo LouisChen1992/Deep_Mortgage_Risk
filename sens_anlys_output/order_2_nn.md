@@ -30,8 +30,8 @@
 | Original Term of the Loan, Scheduled Principle Due (Error)              | 0.00037                      |
 | FICO Score, Original Loan Balance                                       | 0.00037                      |
 | Original Loan Balance, State Unemployment Rate                          | 0.00037                      |
-| Original Term of the Loan, Num_IO_mon (error)                           | 0.00035                      |
-| Original Interest Rate, Num_IO_mon (error)                              | 0.00035                      |
+| Original Term of the Loan, Num_IO_mon (Error)                           | 0.00035                      |
+| Original Interest Rate, Num_IO_mon (Error)                              | 0.00035                      |
 | Original Term of the Loan, Margin for ARM Mortgages (Error)             | 0.00035                      |
 | Original Loan Balance, Current Outstanding Balance                      | 0.00033                      |
 | Original Interest Rate, Lagged Prime Prepayment Rate in Same Zip Code   | 0.00032                      |
@@ -48,7 +48,7 @@
 | Number of Times Current in Last 12 Months, Original Term of the Loan              | 0.00127                      |
 | State Unemployment Rate, Original Term of the Loan                                | 0.00091                      |
 | Original Term of the Loan, Scheduled Principle Due (Error)                        | 0.00066                      |
-| Original Term of the Loan, Num_IO_mon (error)                                     | 0.00066                      |
+| Original Term of the Loan, Num_IO_mon (Error)                                     | 0.00066                      |
 | Original Term of the Loan, Margin for ARM Mortgages (Error)                       | 0.00060                      |
 | FICO Score, Original Interest Rate                                                | 0.00058                      |
 | LTV Ratio, Original Term of the Loan                                              | 0.00048                      |
