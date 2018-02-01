@@ -82,6 +82,8 @@ with tf.Session() as sess:
 			total_train_loss = 0.0
 			count = 0
 			for i, (x, y, info) in enumerate(dl.iterate_one_epoch(model._config.batch_size)):
+				print(x[:,FLAGS.leave_out_idx])
+				dgdsd
 				feed_dict = {model._x_placeholder:x, model._y_placeholder:y, model._epoch_step:info['epoch_step']}
 				loss_i, _ = sess.run(fetches=[model._loss, model._train_op], feed_dict=feed_dict)
 				total_train_loss += loss_i
