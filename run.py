@@ -18,15 +18,15 @@ FLAGS = tf.flags.FLAGS
 ### Create Data Layer
 deco_print('Creating Data Layer')
 if FLAGS.mode == 'train':
-	path = '/vol/Numpy_data_subprime_new'
+	path = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_new')
 	dl = DataInRamInputLayer(path=path, shuffle=True)
-	path_valid = '/vol/Numpy_data_subprime_Val_new'
+	path_valid = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_Val_new')
 	dl_valid = DataInRamInputLayer(path=path_valid, shuffle=False)
 elif FLAGS.mode == 'test':
-	path = '/vol/Numpy_data_subprime_Test_new'
+	path = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_Test_new')
 	dl = DataInRamInputLayer(path=path, shuffle=False)
 elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair' or FLAGS.mode == 'sens_anlys_trio':
-	path = '/vol/Numpy_data_subprime_Test_new'
+	path = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_Test_new')
 	if FLAGS.sample_size == -100:
 		dl = DataInRamInputLayer(path=path, shuffle=False)
 	else:

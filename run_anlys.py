@@ -1,4 +1,5 @@
 import os
+import os
 import math
 import copy
 import numpy as np
@@ -21,7 +22,7 @@ FLAGS = tf.flags.FLAGS
 
 ### Create Data Layer
 deco_print('Creating Data Layer')
-path = '/vol/Numpy_data_subprime_Test_new'
+path = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_Test_new')
 mode = 'analysis'
 dl = DataInRamInputLayer(path=path, shuffle=False, load_file_list=False)
 deco_print('Data Layer Created')
@@ -64,6 +65,17 @@ if FLAGS.task == '1d_nonlinear':
 	x_idx_left = input('Enter Variate Lower Bound (default: mean - 3 * std): ')
 	x_idx_right = input('Enter Variate Upper Bound (default: mean + 3 * std): ')
 	x_idx_left, x_idx_right = decide_boundary(mean[idx], std[idx], x_idx_left, x_idx_right, lower_bound[idx], upper_bound[idx], factor)
+
+	# sample = np.load('model/sample.npy')
+	# x = np.linspace(x_idx_left, x_idx_right, 51)
+	# y = np.zeros((sample.shape[0], len(x)))
+	# for i in range(sample.shape[0]):
+	# 	x_i = sample[i]
+	# 	f = construct_nonlinear_function(sess, model, x_i, idx_output, idx_x=idx, factor_x=factor)
+	# 	for j in range(len(x)):
+	# 		y[i,j] = f(x[j])
+	# y = np.mean(y, axis=0)
+
 	### construct nonlinear function
 	if idx_input != '':
 		for i in range(5):
@@ -71,6 +83,9 @@ if FLAGS.task == '1d_nonlinear':
 				mean[i] = 1
 			else:
 				mean[i] = 0
+	###
+	# mean[251] = 1.0
+	###
 	f = construct_nonlinear_function(sess, model, mean, idx_output, idx_x=idx, factor_x=factor)
 	###
 	x = np.linspace(x_idx_left, x_idx_right, 51)
