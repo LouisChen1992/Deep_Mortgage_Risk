@@ -11,7 +11,7 @@ class DataInRamInputLayer():
 		if load_file_list:
 			self._create_file_list()
 			self._epoch_step = 0
-		self._leave_out_idx = -1
+		self._leave_out_idx = leave_out_idx
 
 	def _create_covariate_idx_associations(self):
 		with open('src/covariate2idx_int.json', 'r') as f:
