@@ -1,6 +1,6 @@
 # Deep_Mortgage_Risk
 
-This repository contains implementations of a five-layer neural network for predicting mortgage risk. Please read the paper [PDF](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2799443) for details. 
+This repository contains implementations of a five-layer neural network for predicting mortgage risk. Please read the paper [PDF](https://stanford.app.box.com/s/0iqyz2zt82uvqjb5cn8tskxxe7m0i0zo) for details. 
 
 ### Requirements
   * Python v3.5
