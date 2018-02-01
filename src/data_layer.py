@@ -100,6 +100,32 @@ class DataInRamInputLayer():
 					X_current_status = X_int_input[:,:5]
 					yield X_input, Y_input, batch_info, X_current_status
 
+	def iterate_one_epoch_step(self, batch_size):
+		if self._shuffle:
+			np.random.shuffle(self._outseq)
+
+		idx_file = self._outseq[0]
+		X_int = np.load(os.path.join(self._path, self._X_int_list[idx_file]))
+		X_float = np.load(os.path.join(self._path, self._X_float_list[idx_file]))
+		outcome = np.load(os.path.join(self._path, self._outcome_list[idx_file]))
+
+		num_example = X_int.shape[0]
+		num_batch = num_example // batch_size
+		idx_example = np.arange(num_example)
+		if self._shuffle:
+			np.random.shuffle(idx_example)
+
+		for idx_batch in range(num_batch):
+			idx_input = idx_example[idx_batch*batch_size:(idx_batch+1)*batch_size]
+			X_int_input = X_int[idx_input]
+			X_float_input = X_float[idx_input]
+			X_input = np.concatenate((X_int_input, X_float_input), axis=1)
+			Y_input = outcome[idx_input]
+			if idx_batch == num_batch - 1:
+				self._epoch_step += 1
+			batch_info = {'epoch_step':self._epoch_step, 'num_file':self._num_file, 'idx_file':0}
+			yield X_input, Y_input, batch_info
+
 	def calculate_feature_statistics(self):
 		moments = np.zeros((2, self._covariate_count))
 		count = 0
