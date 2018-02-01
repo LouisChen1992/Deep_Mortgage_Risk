@@ -92,6 +92,7 @@ class DataInRamInputLayer():
 
 				if self._leave_out_idx != -1:
 					X_input[:, self._leave_out_idx] = 0.0
+					print(X_input[:,251])
 
 				if not output_current_status:
 					yield X_input, Y_input, batch_info
