@@ -87,7 +87,7 @@ with tf.Session() as sess:
 		deco_print('Epoch {} Validation Loss: {} AND {}'.format(epoch, valid_loss_1, valid_loss_2))
 		valid_loss_value_1 = summary_pb2.Summary.Value(tag='epoch_step_valid_loss_1', simple_value=valid_loss_1)
 		valid_loss_value_2 = summary_pb2.Summary.Value(tag='epoch_step_valid_loss_2', simple_value=valid_loss_2)
-		summary = summary_pb2.Summary(value=[valid_loss_value_1, valid_loss_2])
+		summary = summary_pb2.Summary(value=[valid_loss_value_1, valid_loss_value_2])
 		sw.add_summary(summary=summary, global_step=epoch)
 		sw.flush()
 
