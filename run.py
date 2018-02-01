@@ -13,26 +13,29 @@ tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/sens_anlys/sens_anlys_
 tf.flags.DEFINE_integer('sample_size', -100, 'Number of samples')
 tf.flags.DEFINE_integer('num_epochs', 50, 'Number of training epochs')
 tf.flags.DEFINE_float('delta', 1.1, 'Delta')
+tf.flags.DEFINE_integer('leave_out_idx', -1, 'Index leave out covariate')
 FLAGS = tf.flags.FLAGS
 
 ### Create Data Layer
 deco_print('Creating Data Layer')
 if FLAGS.mode == 'train':
 	path = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_new')
-	dl = DataInRamInputLayer(path=path, shuffle=True)
+	dl = DataInRamInputLayer(path=path, shuffle=True, leave_out_idx=FLAGS.leave_out_idx)
 	path_valid = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_Val_new')
-	dl_valid = DataInRamInputLayer(path=path_valid, shuffle=False)
+	dl_valid = DataInRamInputLayer(path=path_valid, shuffle=False, leave_out_idx=FLAGS.leave_out_idx)
 elif FLAGS.mode == 'test':
 	path = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_Test_new')
-	dl = DataInRamInputLayer(path=path, shuffle=False)
+	dl = DataInRamInputLayer(path=path, shuffle=False, leave_out_idx=FLAGS.leave_out_idx)
 elif FLAGS.mode == 'sens_anlys' or FLAGS.mode == 'sens_anlys_pair' or FLAGS.mode == 'sens_anlys_trio':
 	path = os.path.join(os.path.expanduser('~'), 'data/vol/Numpy_data_subprime_Test_new')
 	if FLAGS.sample_size == -100:
-		dl = DataInRamInputLayer(path=path, shuffle=False)
+		dl = DataInRamInputLayer(path=path, shuffle=False, leave_out_idx=FLAGS.leave_out_idx)
 	else:
-		dl = DataInRamInputLayer(path=path, shuffle=True)
+		dl = DataInRamInputLayer(path=path, shuffle=True, leave_out_idx=FLAGS.leave_out_idx)
 else:
 	raise ValueError('Mode Not Implemented')
+if FLAGS.leave_out_idx != -1:
+	deco_print('Leave One Covariate out: %s' %dl._idx2covariate[FLAGS.leave_out_idx])
 deco_print('Data Layer Created')
 ###
 

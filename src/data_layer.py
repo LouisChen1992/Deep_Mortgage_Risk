@@ -4,13 +4,14 @@ import numpy as np
 from sklearn.preprocessing import PolynomialFeatures
 
 class DataInRamInputLayer():
-	def __init__(self, path, shuffle=False, load_file_list=True):
+	def __init__(self, path, shuffle=False, load_file_list=True, leave_out_idx=-1):
 		self._path = path
 		self._shuffle = shuffle
 		self._create_covariate_idx_associations()
 		if load_file_list:
 			self._create_file_list()
 			self._epoch_step = 0
+		self._leave_out_idx = -1
 
 	def _create_covariate_idx_associations(self):
 		with open('src/covariate2idx_int.json', 'r') as f:
@@ -88,6 +89,9 @@ class DataInRamInputLayer():
 					self._epoch_step += 1
 				batch_info = {'epoch_step':self._epoch_step,
 					'num_file':self._num_file, 'idx_file':idx}
+
+				if self._leave_out_idx != -1:
+					X_input[:, self._leave_out_idx] = 0.0
 
 				if not output_current_status:
 					yield X_input, Y_input, batch_info
