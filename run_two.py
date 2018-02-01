@@ -25,8 +25,10 @@ config = Config(feature_dim=291, num_category=7, dropout=0.9)
 config_valid = Config(feature_dim=291, num_category=7, dropout=1.0)
 with tf.variable_scope('nn_1'):
 	model_1 = Model(config)
+	model_1_valid = Model(config_valid, force_var_reuse=True, is_training=False)
 with tf.variable_scope('nn_2'):
 	model_2 = Model(config)
+	model_2_valid = Model(config_valid, force_var_reuse=True, is_training=False)
 deco_print('Read Following Config')
 deco_print_dict(vars(config))
 deco_print('Model Created')
@@ -68,14 +70,14 @@ with tf.Session() as sess:
 		sw.flush()
 
 		total_valid_loss_1 = 0.0
-		total_valid_loss_2 =0.0
+		total_valid_loss_2 = 0.0
 		count_valid = 0
 		for i, (x, y, _) in enumerate(dl_valid.iterate_one_epoch_step(config_valid.batch_size)):
-			feed_dict_1 = {model_1._x_placeholder:x, model_1._y_placeholder:y}
-			loss_1_i, = sess.run(fetches=[model_1._loss], feed_dict=feed_dict_1)
+			feed_dict_1 = {model_1_valid._x_placeholder:x, model_1_valid._y_placeholder:y}
+			loss_1_i, = sess.run(fetches=[model_1_valid._loss], feed_dict=feed_dict_1)
 			x[:,FLAGS.leave_out_idx] = 0.0
-			feed_dict_2 = {model_2._x_placeholder:x, model_2._y_placeholder:y}
-			loss_2_i, = sess.run(fetches=[model_2._loss], feed_dict=feed_dict_2)
+			feed_dict_2 = {model_2_valid._x_placeholder:x, model_2_valid._y_placeholder:y}
+			loss_2_i, = sess.run(fetches=[model_2_valid._loss], feed_dict=feed_dict_2)
 			total_valid_loss_1 += loss_1_i
 			total_valid_loss_2 += loss_2_i
 			count_valid += 1
