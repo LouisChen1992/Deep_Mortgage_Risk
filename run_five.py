@@ -72,22 +72,22 @@ with tf.Session() as sess:
 			feed_dict = {model._x_placeholder:x, model._y_placeholder:y, model._epoch_step:info['epoch_step']}
 			loss_i, _ = sess.run(fetches=[model._loss, model._train_op], feed_dict=feed_dict)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,251] = 0.0
 			feed_dict_251 = {model_251._x_placeholder:x_copy, model_251._y_placeholder:y, model_251._epoch_step:info['epoch_step']}
 			loss_251_i, _ = sess.run(fetches=[model_251._loss, model_251._train_op], feed_dict=feed_dict_251)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,266] = 0.0
 			feed_dict_266 = {model_266._x_placeholder:x_copy, model_266._y_placeholder:y, model_266._epoch_step:info['epoch_step']}
 			loss_266_i, _ = sess.run(fetches=[model_266._loss, model_266._train_op], feed_dict=feed_dict_266)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,239] = 0.0
 			feed_dict_239 = {model_239._x_placeholder:x_copy, model_239._y_placeholder:y, model_239._epoch_step:info['epoch_step']}
 			loss_239_i, _ = sess.run(fetches=[model_239._loss, model_239._train_op], feed_dict=feed_dict_239)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,237] = 0.0
 			feed_dict_237 = {model_237._x_placeholder:x_copy, model_237._y_placeholder:y, model_237._epoch_step:info['epoch_step']}
 			loss_237_i, _ = sess.run(fetches=[model_237._loss, model_237._train_op], feed_dict=feed_dict_237)
@@ -124,22 +124,22 @@ with tf.Session() as sess:
 			feed_dict = {model_valid._x_placeholder:x, model_valid._y_placeholder:y}
 			loss_i, = sess.run(fetches=[model_valid._loss], feed_dict=feed_dict)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,251] = 0.0
 			feed_dict_251 = {model_251_valid._x_placeholder:x_copy, model_251_valid._y_placeholder:y}
 			loss_251_i, = sess.run(fetches=[model_251_valid._loss], feed_dict=feed_dict_251)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,266] = 0.0
 			feed_dict_266 = {model_266_valid._x_placeholder:x_copy, model_266_valid._y_placeholder:y}
 			loss_266_i, = sess.run(fetches=[model_266_valid._loss], feed_dict=feed_dict_266)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,239] = 0.0
 			feed_dict_239 = {model_239_valid._x_placeholder:x_copy, model_239_valid._y_placeholder:y}
 			loss_239_i, = sess.run(fetches=[model_239_valid._loss], feed_dict=feed_dict_239)
 
-			x_copy = copy.deep_copy(x)
+			x_copy = copy.deepcopy(x)
 			x_copy[:,237] = 0.0
 			feed_dict_237 = {model_237_valid._x_placeholder:x_copy, model_237_valid._y_placeholder:y}
 			loss_237_i, = sess.run(fetches=[model_237_valid._loss], feed_dict=feed_dict_237)
@@ -179,24 +179,24 @@ with tf.Session() as sess:
 		feed_dict = {model_valid._x_placeholder:x, model_valid._y_placeholder:y}
 		loss_i, = sess.run(fetches=[model_valid._loss], feed_dict=feed_dict)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,251] = 0.0
-		feed_dict_251 = {model_251_valid._x_placeholder:x, model_251_valid._y_placeholder:y}
+		feed_dict_251 = {model_251_valid._x_placeholder:x_copy, model_251_valid._y_placeholder:y}
 		loss_i_251, = sess.run(fetches=[model_251_valid._loss], feed_dict=feed_dict_251)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,266] = 0.0
-		feed_dict_266 = {model_266_valid._x_placeholder:x, model_266_valid._y_placeholder:y}
+		feed_dict_266 = {model_266_valid._x_placeholder:x_copy, model_266_valid._y_placeholder:y}
 		loss_i_266, = sess.run(fetches=[model_266_valid._loss], feed_dict=feed_dict_266)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,239] = 0.0
-		feed_dict_239 = {model_239_valid._x_placeholder:x, model_239_valid._y_placeholder:y}
+		feed_dict_239 = {model_239_valid._x_placeholder:x_copy, model_239_valid._y_placeholder:y}
 		loss_i_239, = sess.run(fetches=[model_239_valid._loss], feed_dict=feed_dict_239)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,237] = 0.0
-		feed_dict_237 = {model_237_valid._x_placeholder:x, model_237_valid._y_placeholder:y}
+		feed_dict_237 = {model_237_valid._x_placeholder:x_copy, model_237_valid._y_placeholder:y}
 		loss_i_237, = sess.run(fetches=[model_237_valid._loss], feed_dict=feed_dict_237)
 
 		total_train_loss += loss_i
@@ -219,24 +219,24 @@ with tf.Session() as sess:
 		feed_dict = {model_valid._x_placeholder:x, model_valid._y_placeholder:y}
 		loss_i, = sess.run(fetches=[model_valid._loss], feed_dict=feed_dict)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,251] = 0.0
-		feed_dict_251 = {model_251_valid._x_placeholder:x, model_251_valid._y_placeholder:y}
+		feed_dict_251 = {model_251_valid._x_placeholder:x_copy, model_251_valid._y_placeholder:y}
 		loss_i_251, = sess.run(fetches=[model_251_valid._loss], feed_dict=feed_dict_251)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,266] = 0.0
-		feed_dict_266 = {model_266_valid._x_placeholder:x, model_266_valid._y_placeholder:y}
+		feed_dict_266 = {model_266_valid._x_placeholder:x_copy, model_266_valid._y_placeholder:y}
 		loss_i_266, = sess.run(fetches=[model_266_valid._loss], feed_dict=feed_dict_266)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,239] = 0.0
-		feed_dict_239 = {model_239_valid._x_placeholder:x, model_239_valid._y_placeholder:y}
+		feed_dict_239 = {model_239_valid._x_placeholder:x_copy, model_239_valid._y_placeholder:y}
 		loss_i_239, = sess.run(fetches=[model_239_valid._loss], feed_dict=feed_dict_239)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,237] = 0.0
-		feed_dict_237 = {model_237_valid._x_placeholder:x, model_237_valid._y_placeholder:y}
+		feed_dict_237 = {model_237_valid._x_placeholder:x_copy, model_237_valid._y_placeholder:y}
 		loss_i_237, = sess.run(fetches=[model_237_valid._loss], feed_dict=feed_dict_237)
 
 		total_valid_loss += loss_i
@@ -259,24 +259,24 @@ with tf.Session() as sess:
 		feed_dict = {model_valid._x_placeholder:x, model_valid._y_placeholder:y}
 		loss_i, = sess.run(fetches=[model_valid._loss], feed_dict=feed_dict)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,251] = 0.0
-		feed_dict_251 = {model_251_valid._x_placeholder:x, model_251_valid._y_placeholder:y}
+		feed_dict_251 = {model_251_valid._x_placeholder:x_copy, model_251_valid._y_placeholder:y}
 		loss_i_251, = sess.run(fetches=[model_251_valid._loss], feed_dict=feed_dict_251)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,266] = 0.0
-		feed_dict_266 = {model_266_valid._x_placeholder:x, model_266_valid._y_placeholder:y}
+		feed_dict_266 = {model_266_valid._x_placeholder:x_copy, model_266_valid._y_placeholder:y}
 		loss_i_266, = sess.run(fetches=[model_266_valid._loss], feed_dict=feed_dict_266)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,239] = 0.0
-		feed_dict_239 = {model_239_valid._x_placeholder:x, model_239_valid._y_placeholder:y}
+		feed_dict_239 = {model_239_valid._x_placeholder:x_copy, model_239_valid._y_placeholder:y}
 		loss_i_239, = sess.run(fetches=[model_239_valid._loss], feed_dict=feed_dict_239)
 
-		x_copy = copy.deep_copy(x)
+		x_copy = copy.deepcopy(x)
 		x_copy[:,237] = 0.0
-		feed_dict_237 = {model_237_valid._x_placeholder:x, model_237_valid._y_placeholder:y}
+		feed_dict_237 = {model_237_valid._x_placeholder:x_copy, model_237_valid._y_placeholder:y}
 		loss_i_237, = sess.run(fetches=[model_237_valid._loss], feed_dict=feed_dict_237)
 
 		total_test_loss += loss_i
