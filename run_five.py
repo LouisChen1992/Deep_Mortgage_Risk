@@ -25,7 +25,6 @@ dl_valid = DataInRamInputLayer(path=path_valid, shuffle=True)
 dl_test = DataInRamInputLayer(path=path_test, shuffle=False)
 deco_print('Leave Covariates out: %s, %s, %s, %s' %(dl._idx2covariate[251],dl._idx2covariate[266], dl._idx2covariate[239], dl._idx2covariate[237]))
 deco_print('Data Layer Created')
-gdgd
 
 deco_print('Creating Model')
 config = Config(feature_dim=291, num_category=7, dropout=0.9)
@@ -206,7 +205,6 @@ with tf.Session() as sess:
 		total_train_loss_239 += loss_i_239
 		total_train_loss_237 += loss_i_237
 		count_train += 1
-		break
 
 	deco_print('Training Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(total_train_loss/count_train, total_train_loss_251/count_train, total_train_loss_266/count_train, total_train_loss_239/count_train, total_train_loss_237/count_train))
 
@@ -246,7 +244,6 @@ with tf.Session() as sess:
 		total_valid_loss_239 += loss_i_239
 		total_valid_loss_237 += loss_i_237
 		count_valid += 1
-		break
 
 	deco_print('Validation Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(total_valid_loss/count_valid, total_valid_loss_251/count_valid, total_valid_loss_266/count_valid, total_valid_loss_239/count_valid, total_valid_loss_237/count_valid))
 
@@ -286,7 +283,6 @@ with tf.Session() as sess:
 		total_test_loss_239 += loss_i_239
 		total_test_loss_237 += loss_i_237
 		count_test += 1
-		break
 
 	deco_print('Test Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(total_test_loss/count_test, total_test_loss_251/count_test, total_test_loss_266/count_test, total_test_loss_239/count_test, total_test_loss_237/count_test))
 
