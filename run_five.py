@@ -25,6 +25,7 @@ dl_valid = DataInRamInputLayer(path=path_valid, shuffle=True)
 dl_test = DataInRamInputLayer(path=path_test, shuffle=False)
 deco_print('Leave Covariates out: %s, %s, %s, %s' %(dl._idx2covariate[251],dl._idx2covariate[266], dl._idx2covariate[239], dl._idx2covariate[237]))
 deco_print('Data Layer Created')
+gdgd
 
 deco_print('Creating Model')
 config = Config(feature_dim=291, num_category=7, dropout=0.9)
@@ -104,7 +105,7 @@ with tf.Session() as sess:
 		train_epoch_step_loss_266 = total_epoch_step_loss_266 / count_epoch_step
 		train_epoch_step_loss_239 = total_epoch_step_loss_239 / count_epoch_step
 		train_epoch_step_loss_237 = total_epoch_step_loss_237 / count_epoch_step
-		deco_print('Epoch %d Training Loss: %0.3f \t %0.3f \t %0.3f \t %0.3f \t %0.3f' %(epoch, train_epoch_step_loss, train_epoch_step_loss_251, train_epoch_step_loss_266, train_epoch_step_loss_239, train_epoch_step_loss_237), end='\r')
+		deco_print('Epoch %d Training Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(epoch, train_epoch_step_loss, train_epoch_step_loss_251, train_epoch_step_loss_266, train_epoch_step_loss_239, train_epoch_step_loss_237), end='\r')
 		train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_train_loss', simple_value=train_epoch_step_loss)
 		train_loss_value_epoch_step_251 = summary_pb2.Summary.Value(tag='epoch_step_train_loss_251', simple_value=train_epoch_step_loss_251)
 		train_loss_value_epoch_step_266 = summary_pb2.Summary.Value(tag='epoch_step_train_loss_266', simple_value=train_epoch_step_loss_266)
@@ -156,7 +157,7 @@ with tf.Session() as sess:
 		valid_loss_266 = total_valid_loss_266 / count_valid
 		valid_loss_239 = total_valid_loss_239 / count_valid
 		valid_loss_237 = total_valid_loss_237 / count_valid
-		deco_print('Epoch %d Validation Loss: %0.3f \t %0.3f \t %0.3f \t %0.3f \t %0.3f' %(epoch, valid_loss, valid_loss_251, valid_loss_266, valid_loss_239, valid_loss_237), end='\r')
+		deco_print('Epoch %d Validation Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(epoch, valid_loss, valid_loss_251, valid_loss_266, valid_loss_239, valid_loss_237), end='\r')
 		valid_loss_value = summary_pb2.Summary.Value(tag='epoch_step_valid_loss', simple_value=valid_loss)
 		valid_loss_value_251 = summary_pb2.Summary.Value(tag='epoch_step_valid_loss_251', simple_value=valid_loss_251)
 		valid_loss_value_266 = summary_pb2.Summary.Value(tag='epoch_step_valid_loss_266', simple_value=valid_loss_266)
@@ -207,7 +208,7 @@ with tf.Session() as sess:
 		count_train += 1
 		break
 
-	deco_print('Training Loss: %0.3f \t %0.3f \t %0.3f \t %0.3f \t %0.3f' %(total_train_loss/count_train, total_train_loss_251/count_train, total_train_loss_266/count_train, total_train_loss_239/count_train, total_train_loss_237/count_train))
+	deco_print('Training Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(total_train_loss/count_train, total_train_loss_251/count_train, total_train_loss_266/count_train, total_train_loss_239/count_train, total_train_loss_237/count_train))
 
 	total_valid_loss = 0.0
 	total_valid_loss_251 = 0.0
@@ -247,7 +248,7 @@ with tf.Session() as sess:
 		count_valid += 1
 		break
 
-	deco_print('Validation Loss: %0.3f \t %0.3f \t %0.3f \t %0.3f \t %0.3f' %(total_valid_loss/count_valid, total_valid_loss_251/count_valid, total_valid_loss_266/count_valid, total_valid_loss_239/count_valid, total_valid_loss_237/count_valid))
+	deco_print('Validation Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(total_valid_loss/count_valid, total_valid_loss_251/count_valid, total_valid_loss_266/count_valid, total_valid_loss_239/count_valid, total_valid_loss_237/count_valid))
 
 	total_test_loss = 0.0
 	total_test_loss_251 = 0.0
@@ -287,7 +288,7 @@ with tf.Session() as sess:
 		count_test += 1
 		break
 
-	deco_print('Test Loss: %0.3f \t %0.3f \t %0.3f \t %0.3f \t %0.3f' %(total_test_loss/count_test, total_test_loss_251/count_test, total_test_loss_266/count_test, total_test_loss_239/count_test, total_test_loss_237/count_test))
+	deco_print('Test Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(total_test_loss/count_test, total_test_loss_251/count_test, total_test_loss_266/count_test, total_test_loss_239/count_test, total_test_loss_237/count_test))
 
 
 
