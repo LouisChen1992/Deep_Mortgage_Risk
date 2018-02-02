@@ -104,7 +104,7 @@ with tf.Session() as sess:
 		train_epoch_step_loss_266 = total_epoch_step_loss_266 / count_epoch_step
 		train_epoch_step_loss_239 = total_epoch_step_loss_239 / count_epoch_step
 		train_epoch_step_loss_237 = total_epoch_step_loss_237 / count_epoch_step
-		deco_print('Epoch %d Training Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(epoch, train_epoch_step_loss, train_epoch_step_loss_251, train_epoch_step_loss_266, train_epoch_step_loss_239, train_epoch_step_loss_237), end='\r')
+		deco_print('Epoch %d Training Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(epoch, train_epoch_step_loss, train_epoch_step_loss_251, train_epoch_step_loss_266, train_epoch_step_loss_239, train_epoch_step_loss_237))
 		train_loss_value_epoch_step = summary_pb2.Summary.Value(tag='epoch_step_train_loss', simple_value=train_epoch_step_loss)
 		train_loss_value_epoch_step_251 = summary_pb2.Summary.Value(tag='epoch_step_train_loss_251', simple_value=train_epoch_step_loss_251)
 		train_loss_value_epoch_step_266 = summary_pb2.Summary.Value(tag='epoch_step_train_loss_266', simple_value=train_epoch_step_loss_266)
@@ -156,7 +156,7 @@ with tf.Session() as sess:
 		valid_loss_266 = total_valid_loss_266 / count_valid
 		valid_loss_239 = total_valid_loss_239 / count_valid
 		valid_loss_237 = total_valid_loss_237 / count_valid
-		deco_print('Epoch %d Validation Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f' %(epoch, valid_loss, valid_loss_251, valid_loss_266, valid_loss_239, valid_loss_237), end='\r')
+		deco_print('Epoch %d Validation Loss: %0.4f \t %0.4f \t %0.4f \t %0.4f \t %0.4f\n' %(epoch, valid_loss, valid_loss_251, valid_loss_266, valid_loss_239, valid_loss_237))
 		valid_loss_value = summary_pb2.Summary.Value(tag='epoch_step_valid_loss', simple_value=valid_loss)
 		valid_loss_value_251 = summary_pb2.Summary.Value(tag='epoch_step_valid_loss_251', simple_value=valid_loss_251)
 		valid_loss_value_266 = summary_pb2.Summary.Value(tag='epoch_step_valid_loss_266', simple_value=valid_loss_266)
