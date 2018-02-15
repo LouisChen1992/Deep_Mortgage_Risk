@@ -163,11 +163,11 @@ with tf.Session() as sess:
 				if sample_step != FLAGS.sample_size:
 					feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
 					gradients_i, = sess.run(fetches=[model._loss_gradients], feed_dict=feed_dict)
-					print(np.max(gradients_i))
-					print(np.min(gradients_i))
-					print(gradients_i)
-					input()
 					gradients += np.mean(np.absolute(gradients_i), axis=0)
+					print(np.max(gradients))
+					print(np.min(gradients))
+					print(gradients)
+					input()
 					count += 1
 				if info['epoch_step'] != cur_epoch_step:
 					epoch_last = time.time() - epoch_start
