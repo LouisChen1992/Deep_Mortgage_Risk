@@ -171,8 +171,6 @@ with tf.Session() as sess:
 					deco_print('Elapse / Estimate: %.2fs / %.2fs     ' %(epoch_last, time_est), end='\r')
 					cur_epoch_step = info['epoch_step']
 					sample_step = 0
-				if count == 10:
-					break
 			gradients /= count
 			deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_loss.npy'))
 			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_loss.npy'), gradients)
