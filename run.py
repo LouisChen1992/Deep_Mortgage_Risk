@@ -6,7 +6,7 @@ import tensorflow as tf
 from tensorflow.core.framework import summary_pb2
 from src.model import Config, Model
 from src.data_layer import DataInRamInputLayer
-from src.utils import deco_print, deco_print_dict, feature_ranking, feature_ranking_pair, feature_ranking_trio
+from src.utils import deco_print, deco_print_dict, feature_ranking_loss, feature_ranking, feature_ranking_pair, feature_ranking_trio
 
 tf.flags.DEFINE_string('logdir', '', 'Path to save logs and checkpoints')
 tf.flags.DEFINE_string('mode', 'train', 'Mode: train/test/grad_rank/sens_anlys/sens_anlys_pair/sens_anlys_trio')
@@ -179,9 +179,9 @@ with tf.Session() as sess:
 			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_loss.npy'), gradients)
 
 		deco_print('Top 30:')
-		"""
-		TODO
-		"""
+		top_covariate = feature_ranking_loss(FLAGS.logdir, dl._idx2covariate)
+		for item in top_covariate:
+			print(item)
 		deco_print('Gradients Ranking Finished')
 
 	elif FLAGS.mode == 'sens_anlys':

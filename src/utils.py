@@ -52,6 +52,14 @@ def construct_nonlinear_function(sess, model, x_freeze, idx_output, idx_x, idx_y
 			return prob[0][idx_output]
 	return f
 
+def feature_ranking_loss(logdir, idx2covariate, num=30, float_feature_only=False):
+	gradient = np.load(os.path.join(logdir, 'ave_absolute_gradient_loss.npy'))
+	gradient_sorted = sorted([(i, gradient[i]) for i in range(len(gradient))], key=lambda t:-t[1])
+	gradient_sorted = [(idx, idx2covariate[idx], grad) for idx, grad in gradient_sorted]
+	if float_feature_only:
+		gradient_sorted = [item for item in gradient_sorted if item[0] >= 237]
+	return gradient_sorted[:num]
+
 def feature_ranking(logdir, idx2covariate, num=30, status_in=0, status_out=1, float_feature_only=False):
 	gradient = np.load(os.path.join(logdir, 'ave_absolute_gradient.npy'))
 	gradient = gradient[status_in, status_out]
