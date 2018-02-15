@@ -119,6 +119,4 @@ class Model:
 		# sum of prob(v)
 		sum_prob_n = tf.split(value=tf.reduce_sum(self._prob, axis=0), num_or_size_splits=self._config.num_category)
 		self._x_gradients = [tf.gradients(prob_i, self._x_placeholder)[0] for prob_i in sum_prob_n]
-
 		self._loss_gradients = tf.gradients(self._loss, self._x_placeholder)[0]
-		print(self._loss_gradients)
