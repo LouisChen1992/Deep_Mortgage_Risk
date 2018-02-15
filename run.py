@@ -164,10 +164,6 @@ with tf.Session() as sess:
 					feed_dict = {model._x_placeholder:x, model._y_placeholder:y}
 					gradients_i, = sess.run(fetches=[model._loss_gradients], feed_dict=feed_dict)
 					gradients += np.mean(np.absolute(gradients_i), axis=0)
-					print(np.max(gradients))
-					print(np.min(gradients))
-					print(gradients)
-					input()
 					count += 1
 				if info['epoch_step'] != cur_epoch_step:
 					epoch_last = time.time() - epoch_start
@@ -177,7 +173,6 @@ with tf.Session() as sess:
 					sample_step = 0
 				if count == 10:
 					break
-			print(count)
 			gradients /= count
 			deco_print('Saving Output in %s' %os.path.join(FLAGS.logdir, 'ave_absolute_gradient_loss.npy'))
 			np.save(os.path.join(FLAGS.logdir, 'ave_absolute_gradient_loss.npy'), gradients)
