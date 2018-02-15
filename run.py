@@ -165,7 +165,8 @@ with tf.Session() as sess:
 					gradients_i, = sess.run(fetches=[model._loss_gradients], feed_dict=feed_dict)
 					print(np.max(gradients_i))
 					print(np.min(gradients_i))
-					dgdgs
+					print(gradients_i)
+					input()
 					gradients += np.mean(np.absolute(gradients_i), axis=0)
 					count += 1
 				if info['epoch_step'] != cur_epoch_step:
